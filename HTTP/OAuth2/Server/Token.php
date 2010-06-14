@@ -1,13 +1,12 @@
 <?php
 
 require_once 'HTTP/OAuth2.php';
-require_once 'HTTP/OAuth2/Exception.php';
 require_once 'HTTP/OAuth2/Server/Request.php';
 require_once 'HTTP/OAuth2/Server/Response.php';
 require_once 'HTTP/OAuth2/Credential/Client.php';
 require_once 'HTTP/OAuth2/Credential/User.php';
 
-class HTTP_OAuth2_Server_Token
+class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 {
     const ERROR_MSG_REDIRECT_URI_MISMATCH = "redirect_uri_mismatch";
     const ERROR_MSG_BAD_VERIFICATION_CODE = "bad_verification_code";
@@ -16,8 +15,12 @@ class HTTP_OAuth2_Server_Token
     const ERROR_MSG_INVALID_ASSERTION = "invalid_assertion";
     const ERROR_MSG_UNKNOWN_FORMAT = "unknown_format";
     const ERROR_MSG_AUTHORIZATION_EXPIRED = "authorization_expired";
+    const ERROR_MSG_MULTIPLE_CREDENTIALS = "multiple-credentials";
     
-
+    const CLIENT_AUTHEN_TYPE_HTTP_BASIC = 'HTTP_BASIC';
+    const CLIENT_AUTHEN_TYPE_HTTP_DIGEST = 'HTTP_DIGEST';
+    const CLIENT_AUTHEN_TYPE_OAUTH2 = 'OAUTH2';
+    
     protected $_store;
     
     function __construct(HTTP_OAuth2_Storage $store=null){
@@ -58,8 +61,32 @@ class HTTP_OAuth2_Server_Token
     {
     }
     
+    private function _guessClientAuthenType(HTTP_OAuth2_Server_Request $request){
+        $authen_type = '';
+
+        $client_id = $request->getParameter('client_id');
+        if(!empty($client_id)){
+            $authen_type = self::CLIENT_AUTHEN_TYPE_OAUTH2;
+        }
+        
+        $header = $request->getHeader('Authorization');
+        if(!empty($header)){
+            if(!empty($authen_type))
+                throw new HTTP_OAuth2_Exception(self::ERROR_MSG_MULTIPLE_CREDENTIALS);
+            if(0 === strpos($header, 'Basic ')){
+                $authen_type = self::CLIENT_AUTHEN_TYPE_HTTP_BASIC;
+            }elseif(0 === strpos($header, 'Digest ')){
+                $authen_type = self::CLIENT_AUTHEN_TYPE_HTTP_DIGEST;
+            }else{
+                throw new HTTP_OAuth2_Exception("unrecegonized authentication");
+            }
+        }
+        
+        return $authen_type;
+    }
+    
     private function _guessFlow(HTTP_OAuth2_Server_Request $request){
-        $params = $request->getQuery();
+        $params = $request->getParameters();
 
         if(!empty($params['code']))
         {
@@ -87,9 +114,18 @@ class HTTP_OAuth2_Server_Token
         }
     }
     
-    private function _verifyParameter($flow, HTTP_OAuth2_Server_Request $request){
-        $params = $request->getQuery();
-
+    private function _verifyParameter($flow, $authen_type, HTTP_OAuth2_Server_Request $request){
+        $params = $request->getParameters();
+        
+        if($authen_type != self::CLIENT_AUTHEN_TYPE_HTTP_BASIC && $authen_type != self::CLIENT_AUTHEN_TYPE_HTTP_DIGEST){
+            $client_id = $request->getParameter('client_id');
+            if(empty($client_id))
+                throw new HTTP_OAuth2_Exception("client_id missing");
+            $client_secret = $request->getParameter('client_secret');
+            if(empty($client_secret))
+                throw new HTTP_OAuth2_Exception("client_secret missing");
+        }        
+        
         switch($flow)
         {
             case HTTP_OAuth2::CLIENT_FLOW_WEBSERVER:
@@ -133,45 +169,51 @@ class HTTP_OAuth2_Server_Token
 
     }
     
-    private function _extractClient(HTTP_OAuth2_Server_Request $request){
-        $params = $request->getQuery();
-        $client=null;
-        if(!empty($params['client_id'])){
-            $client=new HTTP_OAuth2_Credential_Client();
-            $client->client_id=$params['client_id'];
-            if(!empty($params['client_secret']))
-                $client->client_secret=$params['client_secret'];
+    private function _extractClient($authen_type, HTTP_OAuth2_Server_Request $request){
+// XXXX
+        if($authen_type == self::CLIENT_AUTHEN_TYPE_OAUTH2){
+            $client_id = $request->getParameter('client_id');
+            $client_secret = $request->getParameter('client_secret');
+            $client = $this->_store->selectClient($client_id);
+        }else{
+            $client_id = $request->getHeader('Authorization');
+            $client_secret = null; // $request->getParameter('client_secret');
+            $client_id = 'client_id_111888';
         }
+        $client=null;
+        if(!empty($client_id)){
+            $client=new HTTP_OAuth2_Credential_Client();
+            $client->client_id=$client_id;
+            if(!empty($client_secret))
+                $client->client_secret=$client_secret;
+            $client = $this->_store->selectClient($client_id);
+        }
+
         return $client;
     }
     
-    private function _process($flow, $params){
+    private function _process($flow, $client, $request){
 
         $user=null;
-
-        $client=$this->_store->selectClient($params['client_id']);
-
-        if(empty($client))
-            throw new HTTP_OAuth2_Exception('invalid client');
         
         if(!$client->checkFlow($flow))
             throw new HTTP_OAuth2_Exception('client flow not allowed');
 
         if($flow == HTTP_OAuth2::CLIENT_FLOW_WEBSERVER)
         {
-            if(!$this->checkVerifier($params['client_id'], $params['code']))
+            if(!$this->checkVerifier($request->getParameter('client_id'), $request->getParameter('code')))
             {
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_BAD_VERIFICATION_CODE);
             }
 
-            $verifier = $this->getVerifier($params['code']);
+            $verifier = $this->getVerifier($request->getParameter('code'));
             $user = $verifier->user;
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_USERCREDENTIAL)
         {
             $user = new HTTP_OAuth2_Credential_User();
-            $user->username = $params['username'];
-            $user->password = $params['password'];
+            $user->username = $request->getParameter('username');
+            $user->password = $request->getParameter('password');
             if(!$this->checkUser($user))
             {
                 throw new HTTP_OAuth2_Exception("invalid username/password");
@@ -179,7 +221,7 @@ class HTTP_OAuth2_Server_Token
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_ASSERTION)
         {
-            if(!$this->checkAssertion($params['assertion_type'], $params['coassertionde']))
+            if(!$this->checkAssertion($request->getParameter('assertion_type'), $request->getParameter('coassertionde')))
             {
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INVALID_ASSERTION);
             }
@@ -210,10 +252,11 @@ class HTTP_OAuth2_Server_Token
     function handle()
     {
 
-        $response=new HTTP_OAuth2_Server_Response();
-
         try{
+            $response=new HTTP_OAuth2_Server_Response();
+
             $request=new HTTP_OAuth2_Server_Request();
+            $request->build();
         
             // do not permit other method
             if($request->getMethod() != 'POST')
@@ -222,21 +265,20 @@ class HTTP_OAuth2_Server_Token
             }
 
             $flow = $this->_guessFlow($request);
+            $authen_type = $this->_guessClientAuthenType($request);
             
-            $this->_verifyParameter($flow, $request);
+            $this->_verifyParameter($flow, $authen_type, $request);
 
-            $params = $request->getQuery();
-            $client=$this->_extractClient($request);
+            $params = $request->getParameters();
+            $client=$this->_extractClient($authen_type, $request);
             
             if(empty($client))
-                throw new HTTP_OAuth2_Exception("client_id missing");
-            if(empty($client->client_secret))
-                throw new HTTP_OAuth2_Exception("client_secret missing");
+                throw new HTTP_OAuth2_Exception("client authentication failed");
             
             if(!$this->checkClient($client))
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
                 
-            $ret = $this->_process($flow, $params);
+            $ret = $this->_process($flow, $client, $request);
 
             if($flow == HTTP_OAuth2::CLIENT_FLOW_WEBSERVER)
             {

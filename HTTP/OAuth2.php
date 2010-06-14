@@ -2,7 +2,7 @@
 /**
  * HTTP_OAuth2
  *
- * Implementation of the OAuth specification v2 draft-06
+ * Implementation of the OAuth specification v2 draft-07
  *
  * PHP version 5.2.0+
  *
@@ -18,26 +18,18 @@
  * @copyright 2010 Laurence Miao <laurence.miao@gmail.com>
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link      http://pear.php.net/package/HTTP_OAuth2
- * @link      http://github.com/jeffhodsdon/HTTP_OAuth2
+ * @link      http://github.com/laurencemiao/OAuth2
  */
 
-abstract class HTTP_OAuth2{
+require_once 'OAuth2/Exception.php';
 
+abstract class HTTP_OAuth2{
     const CLIENT_FLOW_WEBSERVER = 'web_server';
     const CLIENT_FLOW_USERAGENT = 'user_agent';
     const CLIENT_FLOW_USERCREDENTIAL = 'user_credentials';
     const CLIENT_FLOW_CLIENTCREDENTIAL = 'client_credentials';
     const CLIENT_FLOW_ASSERTION = 'assertion';
     const CLIENT_FLOW_REFRESHTOKEN = 'refresh_token';
-
-    static public function urldecode($item)
-    {
-        if (is_array($item)) {
-            return array_map(array('HTTP_OAuth2', 'urldecode'), $item);
-        }
-
-        return rawurldecode($item);
-    }
 }
 
 

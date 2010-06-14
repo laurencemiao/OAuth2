@@ -6,5 +6,6 @@ class HTTP_OAuth2_Credential_Verifier extends HTTP_OAuth2_Credential_Core{
     public $client = null;
     public $user = null;
     public $code = null;
+    public $redirect_uri = null;
 }
 

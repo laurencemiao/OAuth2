@@ -73,8 +73,8 @@
    </package>
 
 <extension>
-
-<name>xml</name>
+<name>json</name>
+<name>http</name>
    </extension>
 
 <os>
