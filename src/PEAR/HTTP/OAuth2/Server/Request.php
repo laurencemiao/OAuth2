@@ -2,6 +2,22 @@
 
 require_once 'HTTP/OAuth2.php';
 
+function http_digest_parse($txt)
+{
+   // protect against missing data
+   $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
+   $data = array();
+
+   preg_match_all('@(\w+)=(?:(?:\'([^\']+)\'|"([^"]+)")|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
+
+   foreach ($matches as $m) {
+       $data[$m[1]] = $m[2] ? $m[2] : ($m[3] ? $m[3] : $m[4]);
+       unset($needed_parts[$m[1]]);
+   }
+
+   return $needed_parts ? false : $data;
+}
+
 class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
 {
 
@@ -9,6 +25,7 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
     private $_method = '';
     private $_headers = array();
     private $_parameters=array();
+    private $_auth = null;
 
     function build()
     {
@@ -19,6 +36,13 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
         else
         {
             $this->_method = $_SERVER['REQUEST_METHOD'];
+        }
+        
+        if(isset($_SERVER['PHP_AUTH_USER'])){
+            $this->_auth = array('scheme'=>'basic','username'=>$_SERVER['PHP_AUTH_USER'],'password'=>$_SERVER['PHP_AUTH_PW']);
+        }elseif(isset($_SERVER['PHP_AUTH_DIGEST'])){
+            $this->_auth = http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
+            $this->_auth['scheme'] = 'digest';
         }
 
         if($this->_method == 'POST')
@@ -63,6 +87,11 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
     function getHeader($name)
     {
         return isset($this->_headers[$name])?$this->_headers[$name]:null;
+    }
+    
+    function getAuth()
+    {
+        return $this->_auth;
     }
 
     function getContentType(){
