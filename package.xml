@@ -39,8 +39,17 @@
 
 <contents>
   <dir name="/">
-  <file name="HTTP/OAuth2.php" role="php" />
-  <file name="HTTP/OAuth2/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/Client.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/User.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/AccessToken.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/RefreshToken.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/Verifier.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Request.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Response.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Token.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Storage.php" role="php" />
   </dir>
  </contents>
 
@@ -84,8 +93,17 @@
  </phprelease>
  <phprelease>
   <filelist>
-   <install as="HTTP/OAuth2.php" name="HTTP/OAuth2.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="HTTP/OAuth2/Exception.php" />
+   <install as="HTTP/OAuth2.php" name="src/PEAR/HTTP/OAuth2.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Exception.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/Client.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/User.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/AccessToken.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/RefreshToken.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/Verifier.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Request.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Response.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Token.php" />
+   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Storage.php" />
   </filelist>
  </phprelease>
  <changelog>
