@@ -16,12 +16,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
     const ERROR_MSG_UNKNOWN_FORMAT = "unknown_format";
     const ERROR_MSG_AUTHORIZATION_EXPIRED = "authorization_expired";
     const ERROR_MSG_MULTIPLE_CREDENTIALS = "multiple-credentials";
-    
-    const HTTP_AUTHEN_SCHEME_BASIC = 'HTTP_BASIC';
-    const HTTP_AUTHEN_SCHEME_DIGEST = 'HTTP_DIGEST';
-    const HTTP_AUTHEN_SCHEME_TOKEN = 'HTTP_TOKEN';
-
-    
+        
     protected $_store;
     
     function __construct(HTTP_OAuth2_Storage $store=null){
@@ -61,33 +56,10 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
     function checkRefreshToken($client_id, $refresh_token)
     {
     }
-    
-    private function _guessHttpAuthenScheme(HTTP_OAuth2_Server_Request $request){
-        $authen_type = '';
-
-        $client_id = $request->getParameter('client_id');
         
-        $header = $request->getHeader('Authorization');
-        if(!empty($header)){
-//            if(!empty($authen_type))
-//                throw new HTTP_OAuth2_Exception(self::ERROR_MSG_MULTIPLE_CREDENTIALS);
-            if(0 === strpos($header, 'Basic ')){
-                $authen_type = self::HTTP_AUTHEN_SCHEME_BASIC;
-            }elseif(0 === strpos($header, 'Digest ')){
-                $authen_type = self::HTTP_AUTHEN_SCHEME_DIGEST;
-            }elseif(0 === strpos($header, 'Token ')){
-                $authen_type = self::HTTP_AUTHEN_SCHEME_TOKEN;
-            }else{
-                throw new HTTP_OAuth2_Exception("unrecegonized authentication");
-            }
-        }
-        
-        return $authen_type;
-    }
-    
     private function _guessFlow(HTTP_OAuth2_Server_Request $request){
         $params = $request->getParameters();
-        $auth = $request->getAuth();
+        $auth = $request->getAuthenParameters();
 
         if(!empty($params['code'])) // client_id,client_secret,code,redirect_uri
         {
@@ -117,7 +89,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
     
     private function _verifyParameter($flow, HTTP_OAuth2_Server_Request $request){
         $params = $request->getParameters();
-        $auth = $request->getAuth();
+        $auth = $request->getAuthenParameters();
                 
         switch($flow)
         {
@@ -190,8 +162,8 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         $client=null;
         $client_id = $request->getParameter('client_id');
         if(empty($client_id)){
-            $auth = $request->getAuth();
-            if($authen_type == self::HTTP_AUTHEN_SCHEME_BASIC){
+            $auth = $request->getAuthenParameters();
+            if($authen_type == HTTP_OAuth2_Server_Request::HTTP_AUTHEN_SCHEME_BASIC){
                 $client_id = $auth['username'];
                 $client = $this->_store->selectClient($client_id);
             }
@@ -275,7 +247,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             }
 
             $flow = $this->_guessFlow($request);
-            $authen_type = $this->_guessHttpAuthenScheme($request);
+            $authen_type = $request->getAuthenScheme();
             
             $this->_verifyParameter($flow, $request);
 

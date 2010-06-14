@@ -25,7 +25,13 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
     private $_method = '';
     private $_headers = array();
     private $_parameters=array();
-    private $_auth = null;
+    private $_auth_scheme = '';
+    private $_auth_parameters = null;
+
+    const HTTP_AUTHEN_SCHEME_BASIC = 'HTTP_BASIC';
+    const HTTP_AUTHEN_SCHEME_DIGEST = 'HTTP_DIGEST';
+    const HTTP_AUTHEN_SCHEME_TOKEN = 'HTTP_TOKEN';    
+    
 
     function build()
     {
@@ -39,10 +45,11 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
         }
         
         if(isset($_SERVER['PHP_AUTH_USER'])){
-            $this->_auth = array('scheme'=>'basic','username'=>$_SERVER['PHP_AUTH_USER'],'password'=>$_SERVER['PHP_AUTH_PW']);
+            $this->_auth_scheme = self::HTTP_AUTHEN_SCHEME_BASIC;
+            $this->_auth_parameters = array('username'=>$_SERVER['PHP_AUTH_USER'],'password'=>$_SERVER['PHP_AUTH_PW']);
         }elseif(isset($_SERVER['PHP_AUTH_DIGEST'])){
-            $this->_auth = http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
-            $this->_auth['scheme'] = 'digest';
+            $this->_auth_scheme = self::HTTP_AUTHEN_SCHEME_DIGEST;
+            $this->_auth_parameters = http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
         }
 
         if($this->_method == 'POST')
@@ -89,9 +96,19 @@ class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
         return isset($this->_headers[$name])?$this->_headers[$name]:null;
     }
     
-    function getAuth()
+    function getAuthenScheme()
     {
-        return $this->_auth;
+        return $this->_auth_scheme;
+    }
+    
+    function getAuthenParameter($name)
+    {
+        return isset($this->_auth_parameters[$name])?$this->_auth_parameters[$name]:null;
+    }
+
+    function getAuthenParameters()
+    {
+        return $this->_auth_parameters;
     }
 
     function getContentType(){
