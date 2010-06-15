@@ -2,7 +2,6 @@
 
 require_once 'common.php';
 
-require_once 'HTTP/OAuth2/Storage.php';
 require_once 'HTTP/OAuth2/Storage/Mock.php';
 require_once 'HTTP/OAuth2/Server/Token.php';
 

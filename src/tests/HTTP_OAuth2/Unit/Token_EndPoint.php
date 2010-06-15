@@ -61,7 +61,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		$sData=substr($sData,1);
 		
 		curl_setopt($rCurl,CURLOPT_POSTFIELDS,$sData);
-		curl_exec($rCurl);
+		$ret = curl_exec($rCurl);
+		echo $ret;
 		$info=curl_getinfo($rCurl);
 		$this->assertTrue($info['http_code']==302, 'response status code should be 302');
 

@@ -19,7 +19,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         
     protected $_store;
     
-    function __construct(HTTP_OAuth2_Storage $store=null){
+    function __construct(HTTP_OAuth2_Storage_Abstract $store=null){
         $this->_store = $store;
     }
     
@@ -162,17 +162,24 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 
     }
     
-    private function _extractClient($authen_type, HTTP_OAuth2_Server_Request $request){
+    private function _extractClient(HTTP_OAuth2_Server_Request $request){
+		$authen_type = $request->getAuthenScheme();
         $client=null;
         $client_id = $request->getParameter('client_id');
         if(empty($client_id)){
             $auth = $request->getAuthenParameters();
             if($authen_type == HTTP_OAuth2_Server_Request::HTTP_AUTHEN_SCHEME_BASIC){
                 $client_id = $auth['username'];
-                $client = $this->_store->selectClient($client_id);
+                $client_secret = $auth['password'];
+                $client = new HTTP_OAuth2_Credential_Client();
+				$client->client_id = $client_id;
+				$client->client_secret = $client_secret;
             }
         }else{
-            $client = $this->_store->selectClient($client_id);
+            $client_secret = $request->getParameter('client_secret')
+            $client = new HTTP_OAuth2_Credential_Client();
+			$client->client_id = $client_id;
+			$client->client_secret = $client_secret;
         }
 
         return $client;
@@ -185,6 +192,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         if(!$client->checkFlow($flow))
             throw new HTTP_OAuth2_Exception('client flow not allowed');
 
+       	$refresh_token = null;
         if($flow == HTTP_OAuth2::CLIENT_FLOW_WEBSERVER)
         {
             if(!$this->checkVerifier($request->getParameter('client_id'), $request->getParameter('code')))
@@ -194,6 +202,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 
             $verifier = $this->getVerifier($request->getParameter('code'));
             $user = $verifier->user;
+			$this->_store->createAuthorization($client->client_id,$verifier->user->username);
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_USERCREDENTIAL)
         {
@@ -204,6 +213,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             {
                 throw new HTTP_OAuth2_Exception("invalid username/password");
             }
+			$this->_store->createAuthorization($client->client_id,$user->username);
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_ASSERTION)
         {
@@ -211,6 +221,8 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             {
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INVALID_ASSERTION);
             }
+//			$this->_store->createAuthorization($client->client_id);
+        	$refresh_token=$this->_store->selectRefreshToken($request->getParameter('refresh_token'));
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_REFRESHTOKEN)
         {
@@ -225,13 +237,14 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             {
                 throw new HTTP_OAuth2_Exception("invalid client");
             }
+			$this->_store->createAuthorization($client->client_id);
         }
         else
         {
             throw new HTTP_OAuth2_Exception('params error');
         }
 
-        $refresh_token=$this->_store->createRefreshToken($client, $user);
+        if(is_null($refresh_token))$refresh_token=$this->_store->createRefreshToken($client, $user);
         $access_token=$this->_store->createAccessToken($client, $user);
 
         $ret = array('access_token'=>$access_token->token,'refresh_token'=>$refresh_token->token);
@@ -253,17 +266,16 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             // do not permit other method
             if($request->getMethod() != 'POST')
             {
-                throw new HTTP_OAuth2_Exception('method not supported');
+                throw new HTTP_OAuth2_Exception('method not allowed');
             }
 
             $flow = $this->_guessFlow($request);
-            $authen_type = $request->getAuthenScheme();
             
             $this->_verifyParameter($flow, $request);
 
             $params = $request->getParameters();
 
-            $client=$this->_extractClient($authen_type, $request);
+            $client=$this->_extractClient($request);
             
             if(empty($client))
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
@@ -275,9 +287,16 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 
             if($flow == HTTP_OAuth2::CLIENT_FLOW_WEBSERVER)
             {
-                $response->setHeader("Content-Type",'application/json');
-                $response->setHeader("Location",$params['redirect_uri']."?access_token=".$ret['access_token']);
-                $response->send();
+				if(isset($ret['error']){
+            		$response->setStatus(HTTP_OAuth2_Server_Response::STATUS_MISSING_REQUIRED_PARAMETER);
+	                $response->setHeader("Location",$params['redirect_uri']."?access_token=".$ret['access_token']);
+                	$response->setHeader("Content-Type",'application/json');
+					$response->send();
+				}else{
+                	$response->setHeader("Content-Type",'application/json');
+	                $response->setHeader("Location",$params['redirect_uri']."?access_token=".$ret['access_token']);
+					$response->send();
+				}
             }
             else
             {

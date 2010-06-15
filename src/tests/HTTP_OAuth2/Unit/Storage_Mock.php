@@ -58,6 +58,23 @@ class Storage_Mock extends PHPUnit_Framework_TestCase
         $this->assertTrue($verifier == $stored_verifier, 'stored verifier should equal to the original one');
     }
 
+    public function testCreateAuthorization()
+    {
+		$client = new HTTP_OAuth2_Credential_Client();
+
+		$client->client_id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
+		$client->client_secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
+
+		$user = new HTTP_OAuth2_Credential_User();
+
+		$user->username = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.uniqid();
+		$user->password = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.md5(uniqid());
+
+		$auth = $this->_store->createAuthorization($client->client_id, $user->username);
+		$stored_auth = $this->_store->selectAuthorization($client->client_id, $user->username);
+        $this->assertTrue($auth == $stored_auth, 'stored authorization should equal to the original one');
+    }
+
 	public function tearDown(){
 		$this->_store = null;
 		$files = glob(__OAUTH2_TEST_TMP_DIR__."/".__OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__."*");
