@@ -107,7 +107,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
                     throw new HTTP_OAuth2_Exception("client_secret missing");
                 if(empty($params['code']))
                 {
-                    throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_BAD_AUTHORIZATIONCODE);
+                    throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_BAD_AUTHORIZATIONCODE);
                 }
                 if(empty($params['redirect_uri']))
                 {
@@ -123,7 +123,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
                     throw new HTTP_OAuth2_Exception("client_secret missing");
                 if((empty($params['username']) || empty($params['password'])) && empty($auth)) //XXX
                 {
-                	throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INVALID_USERCREDENTIAL);
+                	throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INVALID_USERCREDENTIAL);
                 }
                 break;
             case HTTP_OAuth2::TOKEN_GRANT_TYPE_ASSERTION:
@@ -135,7 +135,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
                     throw new HTTP_OAuth2_Exception("client_secret missing");
                 if(empty($params['assertion_type']) || empty($params['assertion']))
                 {
-                    throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INVALID_ASSERTION);
+                    throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INVALID_ASSERTION);
                 }
                 break;
             case HTTP_OAuth2::TOKEN_GRANT_TYPE_REFRESHTOKEN:
@@ -191,14 +191,14 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         $user=null;
         
         if(!$client->checkGrantType($grant_type))
-            throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_UNAUTHORIZED_CLIENT);
+            throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_UNAUTHORIZED_CLIENT);
 
        	$refresh_token = null;
         if($grant_type == HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE)
         {
             if(!$this->checkVerifier($request->getParameter('client_id'), $request->getParameter('code')))
             {
-                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_BAD_AUTHORIZATIONCODE);
+                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_BAD_AUTHORIZATIONCODE);
             }
 
             $verifier = $this->getVerifier($request->getParameter('code'));
@@ -212,7 +212,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             $user->password = $request->getParameter('password');
             if(!$this->checkUser($user))
             {
-                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INVALID_USERCREDENTIAL);
+                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INVALID_USERCREDENTIAL);
             }
 			$this->_store->createAuthorization($client->client_id,$user->username);
         }
@@ -220,7 +220,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         {
             if(!$this->checkAssertion($request->getParameter('assertion_type'), $request->getParameter('coassertionde')))
             {
-                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INVALID_ASSERTION);
+                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INVALID_ASSERTION);
             }
 //			$this->_store->createAuthorization($client->client_id);
         	$refresh_token=$this->_store->selectRefreshToken($request->getParameter('refresh_token'));
@@ -279,10 +279,10 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             $client=$this->_extractClient($request);
             
             if(empty($client))
-                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
+                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INCORRECT_CLIENT_CREDENTIAL);
             
             if(!$this->checkClient($client))
-                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
+                throw new HTTP_OAuth2_Exception(HTTP_OAuth2::ERROR_CODE_INCORRECT_CLIENT_CREDENTIAL);
 
             $client=$this->_store->selectClient($client->client_id);
                 

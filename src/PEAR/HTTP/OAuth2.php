@@ -35,15 +35,15 @@ abstract class HTTP_OAuth2{
     const TOKEN_GRANT_TYPE_NONE = 'none';
     const TOKEN_GRANT_TYPE_REFRESHTOKEN = 'refresh_token';
 
-    const ERROR_MSG_REDIRECT_URI_MISMATCH = "redirect_uri_mismatch";
-    const ERROR_MSG_BAD_AUTHORIZATIONCODE = "bad_authorization_code";
-    const ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL = "incorrect_client_credentials";
-    const ERROR_MSG_UNAUTHORIZED_CLIENT = "unauthorized_client"; // The client is not permitted to use this access grant type.
-    const ERROR_MSG_INVALID_ASSERTION = "invalid_assertion";
-    const ERROR_MSG_UNKNOWN_FORMAT = "unknown_format";
-    const ERROR_MSG_AUTHORIZATION_EXPIRED = "authorization_expired";
-    const ERROR_MSG_MULTIPLE_CREDENTIALS = "multiple_credentials";
-    const ERROR_MSG_INVALID_USERCREDENTIAL = "invalid_user_credentials";
+    const ERROR_CODE_REDIRECT_URI_MISMATCH = "redirect_uri_mismatch";
+    const ERROR_CODE_BAD_AUTHORIZATIONCODE = "bad_authorization_code";
+    const ERROR_CODE_INCORRECT_CLIENT_CREDENTIAL = "incorrect_client_credentials";
+    const ERROR_CODE_UNAUTHORIZED_CLIENT = "unauthorized_client"; // The client is not permitted to use this access grant type.
+    const ERROR_CODE_INVALID_ASSERTION = "invalid_assertion";
+    const ERROR_CODE_UNKNOWN_FORMAT = "unknown_format";
+    const ERROR_CODE_AUTHORIZATION_EXPIRED = "authorization_expired";
+    const ERROR_CODE_MULTIPLE_CREDENTIALS = "multiple_credentials";
+    const ERROR_CODE_INVALID_USERCREDENTIAL = "invalid_user_credentials";
 }
 
 
