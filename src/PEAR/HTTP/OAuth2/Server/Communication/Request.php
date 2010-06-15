@@ -1,6 +1,6 @@
 <?php
 
-require_once 'HTTP/OAuth2.php';
+require_once 'HTTP/OAuth2/Server/Communication.php';
 
 function http_digest_parse($txt)
 {
@@ -18,7 +18,7 @@ function http_digest_parse($txt)
    return $needed_parts ? false : $data;
 }
 
-class HTTP_OAuth2_Server_Request extends HTTP_OAuth2
+class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Communication
 {
 
     private $_content_type = '';
