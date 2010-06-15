@@ -60,12 +60,11 @@ class HTTP_OAuth2_Storage_Mock extends HTTP_OAuth2_Storage_Abstract{
 	}
 	function deleteClient($client_id){}
 	function createClient(HTTP_OAuth2_Credential_Client $client){
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_WEBSERVER);
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_USERAGENT);
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_USERCREDENTIAL);
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_CLIENTCREDENTIAL);
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_ASSERTION);
-        $client->addFlow(HTTP_OAuth2::CLIENT_FLOW_REFRESHTOKEN);
+        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE);
+        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_USERBASIC);
+        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_ASSERTION);
+        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_REFRESHTOKEN);
+        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_NONE);
 		$tmpfname = __OAUTH2_TEST_TMP_DIR__.$client->client_id;
 		file_put_contents($tmpfname,serialize($client));
 		clearstatcache();

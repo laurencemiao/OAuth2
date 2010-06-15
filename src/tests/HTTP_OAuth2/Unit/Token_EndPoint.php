@@ -4,7 +4,7 @@ require_once '../commen.php';
 require_once 'HTTP/OAuth2/Storage/Mock.php';
 require_once 'PHPUnit/Framework.php';
  
-define('__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__','token_endpoin_');
+define('__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__','token_endpoint_');
 define('__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__','http://172.16.1.34:12961/oauth2/token.php');
 
 class Token_EndPoint extends PHPUnit_Framework_TestCase
@@ -48,6 +48,7 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		curl_setopt($rCurl,CURLOPT_HEADER,1);
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
+			'grant_type'=>'authorization_code',
 			'client_id'=>$this->_client->client_id,
 			'client_secret'=>$this->_client->client_secret,
 			'code'=>$this->_verifier->code,
@@ -62,7 +63,6 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		
 		curl_setopt($rCurl,CURLOPT_POSTFIELDS,$sData);
 		$ret = curl_exec($rCurl);
-		echo $ret;
 		$info=curl_getinfo($rCurl);
 		$this->assertTrue($info['http_code']==302, 'response status code should be 302');
 
@@ -81,6 +81,7 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		curl_setopt($rCurl,CURLOPT_HEADER,1);
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
+			'grant_type'=>'authorization_code',
 			'client_id'=>$this->_client->client_id,
 			'client_secret'=>$this->_client->client_secret,
 			'code'=>"false_code_".$this->_verifier->code,
@@ -112,7 +113,9 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		curl_setopt($rCurl,CURLOPT_POST,1);
 		curl_setopt($rCurl,CURLOPT_HEADER,1);
 		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
-		$aData=array();
+		$aData=array(
+			'grant_type'=>'none',
+			);
 		$sData = '';
 		foreach($aData as $key=>$val){
 			$sData.="&$key=$val";
@@ -140,6 +143,7 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 		curl_setopt($rCurl,CURLOPT_HEADER,1);
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
+			'grant_type'=>'none',
 			'client_id'=>$this->_client->client_id,
 			'client_secret'=>$this->_client->client_secret,
 			);

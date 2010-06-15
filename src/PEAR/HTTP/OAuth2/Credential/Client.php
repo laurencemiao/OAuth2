@@ -5,25 +5,25 @@ require_once 'HTTP/OAuth2/Credential/Core.php';
 class HTTP_OAuth2_Credential_Client extends HTTP_OAuth2_Credential_Core{
     public $client_id = null;
     public $client_secret = null;
-    private $_flows = '';
+    private $_grant_types = '';
     
-    function addFlow($flow){
-        if(false === strpos(",$this->_flows,",",$flow,")){
-            if(empty($this->_flows)){
-                $this->_flows = $flow;
+    function addGrantType($grant_type){
+        if(false === strpos(",$this->_grant_types,",",$grant_type,")){
+            if(empty($this->_grant_types)){
+                $this->_grant_types = $grant_type;
             }else{
-                $this->_flows .= ",$flow";
+                $this->_grant_types .= ",$grant_type";
             }
         }
     }
-    function deleteFlow($flow){
-        if(false !== strpos(",$this->_flows,",",$flow,")){
-            $this->_flows = str_replace(",$flow",'',",$this->_flows");
-            if(substr($this->_flows,0,1)==',') $this->_flows = substr($this->_flows,1);
+    function deleteGrantType($grant_type){
+        if(false !== strpos(",$this->_grant_types,",",$grant_type,")){
+            $this->_grant_types = str_replace(",$grant_type",'',",$this->_grant_types");
+            if(substr($this->_grant_types,0,1)==',') $this->_grant_types = substr($this->_grant_types,1);
         }
     }
-    function checkFlow($flow){
-        if(false !== strpos(",$this->_flows,",",$flow,")){
+    function checkGrantType($grant_type){
+        if(false !== strpos(",$this->_grant_types,",",$grant_type,")){
             return 1;
         }else{
             return 0;
