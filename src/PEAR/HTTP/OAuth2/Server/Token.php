@@ -36,9 +36,13 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
     function checkVerifier($client_id, $code)
     {
         $verifier = $this->_store->selectVerifier($code);
-        $client = $verifier->client;
+		if(!empty($verifier)){
+	        $client = $verifier->client;
+        	return $client_id == $client->client_id;
+		}else{
+        	return 0;
+		}
         
-        return $client_id == $client->client_id;
     }
     
     function getVerifier($code)
@@ -214,7 +218,13 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
         }
         elseif($flow == HTTP_OAuth2::CLIENT_FLOW_CLIENTCREDENTIAL)
         {
-            throw new HTTP_OAuth2_Exception("to be implemented");
+            $user = new HTTP_OAuth2_Credential_User();
+            $user->username = '';
+            $user->password = '';
+            if(!$this->checkClient($client))
+            {
+                throw new HTTP_OAuth2_Exception("invalid client");
+            }
         }
         else
         {
@@ -256,7 +266,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
             $client=$this->_extractClient($authen_type, $request);
             
             if(empty($client))
-                throw new HTTP_OAuth2_Exception("client authentication failed");
+                throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
             
             if(!$this->checkClient($client))
                 throw new HTTP_OAuth2_Exception(self::ERROR_MSG_INCORRECT_CLIENT_CREDENTIAL);
@@ -265,6 +275,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 
             if($flow == HTTP_OAuth2::CLIENT_FLOW_WEBSERVER)
             {
+                $response->setHeader("Content-Type",'application/json');
                 $response->setHeader("Location",$params['redirect_uri']."?access_token=".$ret['access_token']);
                 $response->send();
             }
@@ -277,6 +288,7 @@ class HTTP_OAuth2_Server_Token extends HTTP_OAuth2
 
         }catch(PEAR_Exception $e){
             $ret = array('error' => $e->getMessage());
+            $response->setStatus(HTTP_OAuth2_Server_Response::STATUS_MISSING_REQUIRED_PARAMETER);
             $response->setHeader("Content-Type",'application/json');
             $response->setParameters($ret);
             $response->send();

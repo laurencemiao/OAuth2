@@ -47,6 +47,7 @@ class HTTP_OAuth2_Server_Response extends HTTP_OAuth2 implements ArrayAccess, Co
      * @var array $headers Headers to send as an OAuth response
      */
     protected $headers = array();
+    protected $code = 200;
 
     /**
      * Body of the response
@@ -129,22 +130,22 @@ class HTTP_OAuth2_Server_Response extends HTTP_OAuth2 implements ArrayAccess, Co
     public function setStatus($status)
     {
         if (!array_key_exists($status, self::$statusMap)) {
-            throw new HTTP_OAuth_Exception('Invalid status');
+            throw new HTTP_OAuth2_Exception('Invalid status');
         }
 
         list($code, $text) = self::$statusMap[$status];
         $this->setBody($text);
 
         if ($this->headersSent()) {
-            throw new HTTP_OAuth_Exception('Status already sent');
+            throw new HTTP_OAuth2_Exception('Status already sent');
         }
 
         switch ($code) {
         case 400:
-            $this->header('HTTP/1.1 400 Bad Request');
+			$this->code = 400;
             break;
         case 401:
-            $this->header('HTTP/1.1 401 Unauthorized');
+			$this->code = 401;
             break;
         }
     }
@@ -221,7 +222,16 @@ class HTTP_OAuth2_Server_Response extends HTTP_OAuth2 implements ArrayAccess, Co
     {
         $this->prepareBody();
         if (!$this->headersSent()) {
-            $this->header('HTTP/1.1 200 OK');
+        	switch ($this->code) {
+	        case 400:
+                $this->header('HTTP/1.1 400 Bad Request');
+                break;
+            case 401:
+                $this->header('HTTP/1.1 401 Unauthorized');
+                break;
+			default:
+	            $this->header('HTTP/1.1 200 OK');
+            }
             foreach ($this->getHeaders() as $name => $value) {
                 $this->header($name . ': ' . $value);
             }

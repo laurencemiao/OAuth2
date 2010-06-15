@@ -1,5 +1,5 @@
 <?php
-define("__OAUTH2_PEAR_DIR__",dirname(__FILE__)."/../PEAR/");
+define("__OAUTH2_PEAR_DIR__",dirname(__FILE__)."/../../PEAR/");
 $pearRoot        = __OAUTH2_PEAR_DIR__;
 $pearLibrary = $pearRoot . DIRECTORY_SEPARATOR . '';
 
