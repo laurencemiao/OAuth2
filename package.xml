@@ -18,7 +18,7 @@
   <active>yes</active>
 </lead>
 
-<date>2010-06-14</date>
+<date>2010-06-16</date>
 <time>11:25:59</time>
 
 <version> 
@@ -41,15 +41,29 @@
   <dir name="/">
   <file name="src/PEAR/HTTP/OAuth2.php" role="php" />
   <file name="src/PEAR/HTTP/OAuth2/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Client.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/Abstract.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Credential/Assertion.php" role="php" />
   <file name="src/PEAR/HTTP/OAuth2/Credential/Client.php" role="php" />
   <file name="src/PEAR/HTTP/OAuth2/Credential/User.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/AccessToken.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/RefreshToken.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/Verifier.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Token/AccessToken.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Token/RefreshToken.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Token/AuthorizationCode.php" role="php" />
   <file name="src/PEAR/HTTP/OAuth2/Server/Request.php" role="php" />
   <file name="src/PEAR/HTTP/OAuth2/Server/Response.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Token.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Storage.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Storage.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Abstract.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Authorization.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Mock.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Exception.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Abstract.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Authorize.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Resource.php" role="php" />
+  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Token.php" role="php" />
   </dir>
  </contents>
 
@@ -93,17 +107,31 @@
  </phprelease>
  <phprelease>
   <filelist>
-   <install as="HTTP/OAuth2.php" name="src/PEAR/HTTP/OAuth2.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Exception.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/Client.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/User.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/AccessToken.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/RefreshToken.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Credential/Verifier.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Request.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Response.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Token.php" />
-   <install as="HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Storage.php" />
+      <install as="/HTTP/OAuth2.php" name="src/PEAR/HTTP/OAuth2.php" />
+      <install as="/HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Exception.php" />
+      <install as="/HTTP/OAuth2/Client.php" name="src/PEAR/HTTP/OAuth2/Client.php" />
+      <install as="/HTTP/OAuth2/Server.php" name="src/PEAR/HTTP/OAuth2/Server.php" />
+      <install as="HTTP/OAuth2/Credential/Abstract.php" name="src/PEAR/HTTP/OAuth2/Credential/Abstract.php" />
+      <install as="HTTP/OAuth2/Credential/Assertion.php" name="src/PEAR/HTTP/OAuth2/Credential/Assertion.php" />
+      <install as="HTTP/OAuth2/Credential/Client.php" name="src/PEAR/HTTP/OAuth2/Credential/Client.php" />
+      <install as="HTTP/OAuth2/Credential/User.php" name="src/PEAR/HTTP/OAuth2/Credential/User.php" />
+      <install as="hTTP/OAuth2/Token/AccessToken.php" name="src/PEAR/HTTP/OAuth2/Token/AccessToken.php" />
+      <install as="HTTP/OAuth2/Token/RefreshToken.php" name="src/PEAR/HTTP/OAuth2/Token/RefreshToken.php" />
+      <install as="HTTP/OAuth2/Token/AuthorizationCode.php" name="src/PEAR/HTTP/OAuth2/Token/AuthorizationCode.php" />
+      <install as="HTTP/OAuth2/Server/Request.php" name="src/PEAR/HTTP/OAuth2/Server/Request.php" />
+      <install as="HTTP/OAuth2/Server/Response.php" name="src/PEAR/HTTP/OAuth2/Server/Response.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint.php" />
+      <install as="HTTP/OAuth2/Server/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Exception.php" />
+      <install as="HTTP/OAuth2/Server/Storage.php" name="src/PEAR/HTTP/OAuth2/Server/Storage.php" />
+      <install as="HTTP/OAuth2/Server/Storage/Abstract.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Abstract.php" />
+      <install as="HTTP/OAuth2/Server/Storage/Authorization.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Authorization.php" />
+      <install as="HTTP/OAuth2/Server/Storage/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Exception.php" />
+      <install as="HTTP/OAuth2/Server/Storage/Mock.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Mock.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Exception.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint/Abstract.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Abstract.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint/Authorize.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Authorize.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint/Resource.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Resource.php" />
+      <install as="HTTP/OAuth2/Server/EndPoint/Token.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Token.php" />
   </filelist>
  </phprelease>
  <changelog>
