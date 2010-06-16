@@ -1,9 +1,8 @@
 <?php
 
-require_once 'common.php';
+$__CUR_DIR__=dirname(__FILE__);
+require_once "$__CUR_DIR__/common.php";
 
-require_once 'HTTP/OAuth2/Server/Storage/Mock.php';
-require_once 'HTTP/OAuth2/Server/EndPoint/Token.php';
 
 $config = array(
     'grant_type' => array(
@@ -16,10 +15,6 @@ $config = array(
     'access_token_expires_in' => 7200,
     'show_refresh_token' => true,
     );
-    
-$mystore=new HTTP_OAuth2_Server_Storage_Mock();
-//$mystore->init(__OAUTH2_TEST_UNIX_TMP_DIR__);
-$mystore->init(__OAUTH2_TEST_WIN_TMP_DIR__);
 
 $myserver=new HTTP_OAuth2_Server_EndPoint_Token($config, $mystore);
 

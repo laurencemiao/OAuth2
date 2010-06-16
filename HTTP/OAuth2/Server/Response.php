@@ -34,7 +34,7 @@ class HTTP_OAuth2_Server_Response extends HTTP_OAuth2_Server{
         if(headers_sent() && $this->_body !== '') {
             return 0;
         } else {
-            $this->_body = json_encode($this->_parameters);
+            if(!empty($this->_parameters))$this->_body = json_encode($this->_parameters);
             return 1;
         }
     }

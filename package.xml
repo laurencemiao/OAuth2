@@ -4,189 +4,98 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
 
-<name>HTTP_OAuth2</name>
+    <name>HTTP_OAuth2</name>
+    <channel>pear.php.net</channel>
+    <summary>HTTP_OAuth2</summary>
+    <description>An implementation of OAuth Spec v2.0 draft_08</description>
 
-<channel>pear.php.net</channel>
+    <lead> 
+        <name>Laurence Miao</name>
+        <user>laurencemiao</user>
+        <email>laurence.miao@gmail.com</email>
+        <active>yes</active>
+    </lead>
 
-<summary>HTTP_OAuth2</summary>
-<description>An implementation of OAuth Spec v2.0</description>
+    <date>2010-06-16</date>
+    <time>21:32:00</time>
 
-<lead> 
-  <name>Laurence Miao</name>
-  <user>laurencemiao</user>
-  <email>laurence.miao@gmail.com</email>
-  <active>yes</active>
-</lead>
+    <version>
+      <release>0.0.1</release>
+      <api>0.0.1</api>
+    </version>
 
-<date>2010-06-16</date>
-<time>11:25:59</time>
+    <stability>
+      <release>alpha</release>
+      <api>alpha</api>
+    </stability>
 
-<version> 
-  <release>0.0.2</release>
-  <api>1.9.07</api>
-</version>
-
-<stability>
-  <release>alpha</release>
-  <api>alpha</api>
-</stability>
-
-<license uri="http://www.php.net/license/">PHP License</license>
- <notes>
+    <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+    <notes>
  Put release notes here.
  They can be multi-line
- </notes>
+    </notes>
 
-<contents>
-  <dir name="/">
-  <file name="src/PEAR/HTTP/OAuth2.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Exception.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Client.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/Abstract.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/Assertion.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/Client.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Credential/User.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Token/AccessToken.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Token/RefreshToken.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Token/AuthorizationCode.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Request.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Response.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Exception.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Storage.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Abstract.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Authorization.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Exception.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/Storage/Mock.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Exception.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Abstract.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Authorize.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Resource.php" role="php" />
-  <file name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Token.php" role="php" />
-  </dir>
- </contents>
+    <contents>
+      <dir name="/">
+          <file name="HTTP/OAuth2.php" role="php" />
+          <file name="HTTP/OAuth2/Exception.php" role="php" />
+          <file name="HTTP/OAuth2/Client.php" role="php" />
+          <file name="HTTP/OAuth2/Server.php" role="php" />
+          <file name="HTTP/OAuth2/Credential/Abstract.php" role="php" />
+          <file name="HTTP/OAuth2/Credential/Assertion.php" role="php" />
+          <file name="HTTP/OAuth2/Credential/Client.php" role="php" />
+          <file name="HTTP/OAuth2/Credential/User.php" role="php" />
+          <file name="HTTP/OAuth2/Token/AccessToken.php" role="php" />
+          <file name="HTTP/OAuth2/Token/RefreshToken.php" role="php" />
+          <file name="HTTP/OAuth2/Token/AuthorizationCode.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Request.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Response.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Exception.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Storage.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Storage/Abstract.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Storage/Authorization.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Storage/Exception.php" role="php" />
+          <file name="HTTP/OAuth2/Server/Storage/Mock.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Exception.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Abstract.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Authorize.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Resource.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Token.php" role="php" />
+
+          <file name="examples/server/authorize.php" role="doc" />
+          <file name="examples/server/token.php" role="doc" />
+          <file name="examples/server/common.php" role="doc" />
+      </dir>
+     </contents>
 
 <dependencies>
 
-<required>
+    <required>
+        <php>
+            <min>5</min>
+            <max>6.0.0</max>
+        </php>
 
-<php>
+        <pearinstaller>
+            <min>1.4.0</min>
+        </pearinstaller>
 
-<min>4.2</min>
-    <max>6.0.0</max>
-   </php>
-
-<pearinstaller>
-
-<min>1.4.0dev13</min>
-   </pearinstaller>
-
-<extension>
-<name>http</name>
-</extension>
-<extension>
-<name>json</name>
-</extension>
-
-<arch>
-
-<pattern>*-i?86-*-*</pattern>
-   </arch>
-  </required>
- </dependencies>
-<phprelease>
-
-<installconditions>
-   <os>
-    <name>windows</name>
-   </os>
-  </installconditions>
-  <filelist>
-  </filelist>
- </phprelease>
- <phprelease>
-  <filelist>
-      <install as="/HTTP/OAuth2.php" name="src/PEAR/HTTP/OAuth2.php" />
-      <install as="/HTTP/OAuth2/Exception.php" name="src/PEAR/HTTP/OAuth2/Exception.php" />
-      <install as="/HTTP/OAuth2/Client.php" name="src/PEAR/HTTP/OAuth2/Client.php" />
-      <install as="/HTTP/OAuth2/Server.php" name="src/PEAR/HTTP/OAuth2/Server.php" />
-      <install as="HTTP/OAuth2/Credential/Abstract.php" name="src/PEAR/HTTP/OAuth2/Credential/Abstract.php" />
-      <install as="HTTP/OAuth2/Credential/Assertion.php" name="src/PEAR/HTTP/OAuth2/Credential/Assertion.php" />
-      <install as="HTTP/OAuth2/Credential/Client.php" name="src/PEAR/HTTP/OAuth2/Credential/Client.php" />
-      <install as="HTTP/OAuth2/Credential/User.php" name="src/PEAR/HTTP/OAuth2/Credential/User.php" />
-      <install as="hTTP/OAuth2/Token/AccessToken.php" name="src/PEAR/HTTP/OAuth2/Token/AccessToken.php" />
-      <install as="HTTP/OAuth2/Token/RefreshToken.php" name="src/PEAR/HTTP/OAuth2/Token/RefreshToken.php" />
-      <install as="HTTP/OAuth2/Token/AuthorizationCode.php" name="src/PEAR/HTTP/OAuth2/Token/AuthorizationCode.php" />
-      <install as="HTTP/OAuth2/Server/Request.php" name="src/PEAR/HTTP/OAuth2/Server/Request.php" />
-      <install as="HTTP/OAuth2/Server/Response.php" name="src/PEAR/HTTP/OAuth2/Server/Response.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint.php" />
-      <install as="HTTP/OAuth2/Server/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Exception.php" />
-      <install as="HTTP/OAuth2/Server/Storage.php" name="src/PEAR/HTTP/OAuth2/Server/Storage.php" />
-      <install as="HTTP/OAuth2/Server/Storage/Abstract.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Abstract.php" />
-      <install as="HTTP/OAuth2/Server/Storage/Authorization.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Authorization.php" />
-      <install as="HTTP/OAuth2/Server/Storage/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Exception.php" />
-      <install as="HTTP/OAuth2/Server/Storage/Mock.php" name="src/PEAR/HTTP/OAuth2/Server/Storage/Mock.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint/Exception.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Exception.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint/Abstract.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Abstract.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint/Authorize.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Authorize.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint/Resource.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Resource.php" />
-      <install as="HTTP/OAuth2/Server/EndPoint/Token.php" name="src/PEAR/HTTP/OAuth2/Server/EndPoint/Token.php" />
-  </filelist>
- </phprelease>
+        <extension>
+            <name>http</name>
+        </extension>
+        <extension>
+            <name>json</name>
+        </extension>
+    </required>
+</dependencies>
+<phprelease />
  <changelog>
   <release>
    <version>
-    <release>1.3.5</release>
-    <api>1.3.0</api>
+    <release>0.0.1</release>
+    <api>0.0.1</api>
    </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2005-02-26</date>
-   <license uri="http://www.php.net/license/3_0.txt">PHP License</license>
-   <notes>
- * fix Bug #3505: pecl can't install PDO
- * enhance pear run-tests dramatically
- * fix Bug #3506: pear install should export the pear version into the environment
-
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.0</release>
-    <api>1.4.0</api>
-   </version>
-   <stability>
-    <release>1.4.0</release>
-    <api>1.4.0</api>
-   </stability>
-   <date>2005-02-26</date>
-   <license uri="http://www.php.net/license/3_0.txt">PHP License</license>
-   <notes>
-  This is a major milestone release for PEAR.  In addition to several killer features,
-  every single element of PEAR has a regression test, and so stability is much higher
-  than any previous PEAR release, even with the alpha label.
-
-  New features in a nutshell:
-  * full support for channels
-  * pre-download dependency validation
-  * new package.xml 2.0 format allows tremendous flexibility while maintaining BC
-  * support for optional dependency groups and limited support for sub-packaging
-  * robust dependency support
-  * full dependency validation on uninstall
-  * support for binary PECL packages
-  * remote install for hosts with only ftp access - no more problems with
-    restricted host installation
-  * full support for mirroring
-  * support for bundling several packages into a single tarball
-  * support for static dependencies on a url-based package
-
-  Specific changes from 1.3.5:
-  * Implement request #1789: SSL support for xml-rpc and download
-  * Everything above here that you just read
-   </notes>
   </release>
  </changelog>
 </package>

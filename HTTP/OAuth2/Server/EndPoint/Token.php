@@ -247,14 +247,14 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
         if($client_authen_type == self::CLIENT_AUTHEN_TYPE_HTTPBASIC){
             $http_authen_params = $request->getAuthenParameters();
             $client = new HTTP_OAuth2_Credential_Client();
-            $client->client_id = $http_authen_params['username'];
-            $client->client_secret = empty($http_authen_params['password'])?null:$http_authen_params['password'];
+            $client->id = $http_authen_params['username'];
+            $client->secret = empty($http_authen_params['password'])?null:$http_authen_params['password'];
         }elseif($client_authen_type == self::CLIENT_AUTHEN_TYPE_FORM){
             $client_id = $request->getParameter('client_id');
             $client_secret = $request->getParameter('client_secret');
             $client = new HTTP_OAuth2_Credential_Client();
-            $client->client_id = $client_id;
-            $client->client_secret = $client_secret;
+            $client->id = $client_id;
+            $client->secret = $client_secret;
         }
 
         return $client;
@@ -281,7 +281,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
 
     private function _process($grant_type, $client, $user, $request){
 
-        $client = $this->_store->selectClient($client->client_id);
+        $client = $this->_store->selectClient($client->id);
         
         if(!$client->checkGrantType($grant_type))
             throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_UNAUTHORIZED_CLIENT);
@@ -297,8 +297,8 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
             }
             $verifier = $this->_store->selectAuthorizationCode($request->getParameter('code'));
 
-            $client_id = $verifier->client_id;
-            if($client_id != $client->client_id){
+            $client_id = $verifier->id;
+            if($client_id != $client->id){
                 throw new HTTP_OAuth2_Server_EndPoint_Exception("'client_id' not equal");
             }
             if($verifier->redirect_uri != $request->getParameter('redirect_uri')){
@@ -317,7 +317,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_INVALID_USERCREDENTIAL);
             }
             $username = $user->username;
-            $client_id = $client->client_id;
+            $client_id = $client->id;
             $authorization = $this->_store->createAuthorization(
                 HTTP_OAuth2_Server_Storage_Authorization::AUTHORIZATION_TYPE_USER,
                 $client_id,
@@ -332,7 +332,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
             {
                 throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_INVALID_ASSERTION);
             }
-            $client_id = $client->client_id;
+            $client_id = $client->id;
             $authorization = $this->_store->createAuthorization(
                 HTTP_OAuth2_Server_Storage_Authorization::AUTHORIZATION_TYPE_ASSERTION,
                 $client_id,
@@ -349,7 +349,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
         }
         elseif($grant_type == HTTP_OAuth2::TOKEN_GRANT_TYPE_NONE)
         {
-            $client_id = $client->client_id;
+            $client_id = $client->id;
             $authorization = $this->_store->createAuthorization(
                 HTTP_OAuth2_Server_Storage_Authorization::AUTHORIZATION_TYPE_NONE,
                 $client_id);
@@ -457,29 +457,10 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
             
             $ret = $this->_process($grant_type, $client, $user, $request);
 
-            if($grant_type == HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE)
-            {
-                $redirect_uri = $request->getParameter('redirect_uri');
-                if(isset($ret['error'])){
-                    $response->setStatus(HTTP_OAuth2_Server_Response::HTTP_STATUS_HEADER_400);
-                    $response->setHeader("Location",$redirect_uri."?access_token=".$ret['access_token']."&refresh_token=".$ret['refresh_token']);
-                    $response->setHeader("Content-Type",'application/json');
-                    $response->build();
-                    $response->send();
-                }else{
-                    $response->setHeader("Content-Type",'application/json');
-                    $response->setHeader("Location",$redirect_uri."?access_token=".$ret['access_token']."&refresh_token=".$ret['refresh_token']);
-                    $response->build();
-                    $response->send();
-                }
-            }
-            else
-            {
-                $response->setHeader("Content-Type",'application/json');
-                $response->setParameters($ret);
-                $response->build();
-                $response->send();
-            }
+            $response->setHeader("Content-Type",'application/json');
+            $response->setParameters($ret);
+            $response->build();
+            $response->send();
 
         }catch(PEAR_Exception $e){
             $ret = array('error' => $e->getMessage());

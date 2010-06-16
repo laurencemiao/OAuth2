@@ -4,15 +4,13 @@ require_once 'HTTP/OAuth2/Server/Storage.php';
 require_once 'HTTP/OAuth2/Server/Storage/Abstract.php';
 require_once 'HTTP/OAuth2/Server/Storage/Authorization.php';
 
-define('__OAUTH2_TEST_UNIX_TMP_DIR__','/tmp/oauth2/');
-define('__OAUTH2_TEST_WIN_TMP_DIR__','c:\\temp\\oauth2\\');
 
 class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstract
 {
 
     private $_dir;
     
-    function init($dir = __OAUTH2_TEST_UNIX_TMP_DIR__){
+    function init($dir = "/tmp"){
         $this->_dir = $dir;
         if(!is_dir($this->_dir))
             mkdir($this->_dir);
@@ -64,7 +62,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function createAuthorization($type, $client_id, $key = null, $key_type = null, $scope = null){
         $auth=new HTTP_OAuth2_Server_Storage_Authorization();
         $auth->type = $type;
-        $auth->client_id = $client_id;
+        $auth->id = $client_id;
         $auth->key = $key;
         $auth->key_type = $key_type;
         $auth->id = md5("$client_id-$key-$key_type");
@@ -90,19 +88,24 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
 
         return $client;
     }
-    
     function deleteClient($client_id){}
     function createClient(HTTP_OAuth2_Credential_Client $client){
-        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE);
-        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_USERBASIC);
-        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_ASSERTION);
-        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_REFRESHTOKEN);
-        $client->addGrantType(HTTP_OAuth2::TOKEN_GRANT_TYPE_NONE);
-        $this->_save($client->client_id,$client);
+        $this->_save($client->id,$client);
 
         return $client;
     }
+    function checkClient(HTTP_OAuth2_Credential_Client $client){
+        $ret = 0;
+        $check_client = $this->_load($client->id);
+        if(!empty($check_client)){
+            if($check_client->secret == $client->secret){
+                $ret = 1;
+            }
+        }
 
+        return $ret;
+    }
+    
     function selectAuthorizationCode($code){
         $verifier = $this->_load($code);
         return $verifier;
@@ -110,7 +113,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function createAuthorizationCode(HTTP_OAuth2_Token_AuthorizationCode $verifier)
     {
 
-        $code = substr(md5($verifier->client_id.$verifier->username.microtime(1)),0,8);
+        $code = substr(md5($verifier->id.$verifier->username.microtime(1)),0,8);
         $verifier->code = $code;
 
         $this->_save($code, $verifier);
@@ -124,7 +127,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
         $ret = 0;
         $check_verifier = $this->selectAuthorizationCode($verifier->code);
         if(!empty($check_verifier)){
-            if($verifier->client_id == $check_verifier->client_id &&
+            if($verifier->id == $check_verifier->id &&
                 $verifier->redirect_uri == $check_verifier->redirect_uri){
                 $ret = 1;
             }
@@ -148,11 +151,16 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function deleteRefreshToken($refresh_token){}
     function checkRefreshToken(HTTP_OAuth2_Token_RefreshToken $refresh_token){}
 
-    function checkClient(HTTP_OAuth2_Credential_Client $client){
-        return 1;
-    }
     function checkUser(HTTP_OAuth2_Credential_User $user){
-        return 1;
+        $ret = 0;
+        $check_user = $this->_load($user->username);
+        if(!empty($check_user)){
+            if($check_user->password == $user->password){
+                $ret = 1;
+            }
+        }
+
+        return $ret;
     }
 
     function selectAccessToken($access_token){
