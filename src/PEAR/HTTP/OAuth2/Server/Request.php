@@ -1,24 +1,9 @@
 <?php
 
-require_once 'HTTP/OAuth2/Server/Communication.php';
+require_once 'HTTP/OAuth2/Server.php';
 
-function http_digest_parse($txt)
-{
-   // protect against missing data
-   $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
-   $data = array();
 
-   preg_match_all('@(\w+)=(?:(?:\'([^\']+)\'|"([^"]+)")|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
-
-   foreach ($matches as $m) {
-       $data[$m[1]] = $m[2] ? $m[2] : ($m[3] ? $m[3] : $m[4]);
-       unset($needed_parts[$m[1]]);
-   }
-
-   return $needed_parts ? false : $data;
-}
-
-class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Communication
+class HTTP_OAuth2_Server_Request extends HTTP_OAuth2_Server
 {
 
     private $_content_type = '';
@@ -30,14 +15,20 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
 
     const HTTP_AUTHEN_SCHEME_BASIC = 'HTTP_BASIC';
     const HTTP_AUTHEN_SCHEME_DIGEST = 'HTTP_DIGEST';
-    const HTTP_AUTHEN_SCHEME_TOKEN = 'HTTP_TOKEN';    
+    const HTTP_AUTHEN_SCHEME_TOKEN = 'HTTP_TOKEN';
     
-
+    const HTTP_METHOD_GET       = 'GET';
+    const HTTP_METHOD_POST      = 'POST';
+    const HTTP_METHOD_DELETE    = 'DELETE';
+    const HTTP_METHOD_HEAD      = 'HEAD';
+    
     function build()
     {
+    
+        $ret = 1;
         if(empty($_SERVER['REQUEST_METHOD']))
         {
-            $this->_method = 'HEAD';
+            $this->_method = self::HTTP_METHOD_HEAD;
         }
         else
         {
@@ -49,17 +40,16 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
             $this->_auth_parameters = array('username'=>$_SERVER['PHP_AUTH_USER'],'password'=>$_SERVER['PHP_AUTH_PW']);
         }elseif(isset($_SERVER['PHP_AUTH_DIGEST'])){
             $this->_auth_scheme = self::HTTP_AUTHEN_SCHEME_DIGEST;
-            $this->_auth_parameters = http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
+            $this->_auth_parameters = self::_http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
         }
 
-        if($this->_method == 'POST')
+        if($this->_method == self::HTTP_METHOD_POST)
         {
             $this->_content_type=empty($_SERVER['CONTENT_TYPE'])?'':$_SERVER['CONTENT_TYPE'];
             if($this->_content_type == 'application/json')
             {
                 $this->_parameters = json_decode(file_get_contents('php://input'),1);
-                if(false === $this->_parameters)
-                    throw new HTTP_OAuth2_Exception("failed to decode json data");
+                if(false === $this->_parameters) $ret = 0;
             }
             elseif($this->_content_type == 'application/x-www-form-urlencoded')
             {
@@ -67,16 +57,16 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
             }
             else
             {
-                throw new HTTP_OAuth2_Exception("content type '$this->_content_type' not supported");
+                $ret = 0;
             }
         }
-        elseif($this->_method == 'GET')
+        elseif($this->_method == self::HTTP_METHOD_GET)
         {
             $this->_parameters=$_GET;
         }
         else
         {
-            throw new HTTP_OAuth2_Exception("'$this->_method' method not supported");
+            $ret = 0;
         }
 
         if (function_exists('apache_request_headers')) {
@@ -84,8 +74,36 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
         }else{
             $this->_headers = http_get_request_headers();
         }
+        
+        return $ret;
     }
 
+    private function _http_digest_parse($txt)
+    {
+        // protect against missing data
+        $needed_parts = array(
+                        'nonce'=>1,
+                        'nc'=>1,
+                        'cnonce'=>1,
+                        'qop'=>1,
+                        'username'=>1,
+                        'uri'=>1,
+                        'response'=>1);
+                        
+        $data = array();
+
+        preg_match_all('@(\w+)=(?:(?:\'([^\']+)\'|"([^"]+)")|([^\s,]+))@',
+                        $txt, $matches,
+                        PREG_SET_ORDER);
+
+        foreach ($matches as $m) {
+            $data[$m[1]] = $m[2] ? $m[2] : ($m[3] ? $m[3] : $m[4]);
+            unset($needed_parts[$m[1]]);
+        }
+
+        return $needed_parts ? false : $data;
+    }
+    
     function getHeaders()
     {
         return $this->_headers;
@@ -93,7 +111,7 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
 
     function getHeader($name)
     {
-        return isset($this->_headers[$name])?$this->_headers[$name]:null;
+        return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
     }
     
     function getAuthenScheme()
@@ -103,7 +121,7 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
     
     function getAuthenParameter($name)
     {
-        return isset($this->_auth_parameters[$name])?$this->_auth_parameters[$name]:null;
+        return isset($this->_auth_parameters[$name]) ? $this->_auth_parameters[$name] : null;
     }
 
     function getAuthenParameters()
@@ -120,7 +138,7 @@ class HTTP_OAuth2_Server_Communication_Request extends HTTP_OAuth2_Server_Commun
     }
 
     function getParameter($name){
-        return isset($this->_parameters[$name])?$this->_parameters[$name]:null;
+        return isset($this->_parameters[$name]) ? $this->_parameters[$name] : null;
     }
 
     public function getMethod(){

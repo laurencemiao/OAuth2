@@ -29,14 +29,6 @@ class HTTP_OAuth2_Credential_Client extends HTTP_OAuth2_Credential_Abstract{
             return 0;
         }
     }
-    
-    static public function authenticate(HTTP_OAuth2_Credential_Abstract $object, HTTP_OAuth2_Credential_Abstract $check_object){
-        if($object->client_id == $check_object->client_id && $object->client_secret == $check_object->client_secret){
-            return 1;
-        }else{
-            return 0;
-        }
-    }
 
 }
 
