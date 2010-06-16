@@ -66,6 +66,11 @@
           <file name="examples/server/authorize.php" role="doc" />
           <file name="examples/server/token.php" role="doc" />
           <file name="examples/server/common.php" role="doc" />
+          <file name="examples/server/init.php" role="doc" />
+          <file name="examples/client/cb.php" role="doc" />
+          <file name="examples/client/browser.php" role="doc" />
+          <file name="examples/client/common.php" role="doc" />
+          <file name="examples/test_conf.php" role="doc" />
       </dir>
      </contents>
 
