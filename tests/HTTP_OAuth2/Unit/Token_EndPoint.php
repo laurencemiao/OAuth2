@@ -1,12 +1,10 @@
 <?php
 
-require_once '../commen.php';
-require_once 'HTTP/OAuth2/Storage/Mock.php';
+$__CUR_DIR__ = dirname(__FILE__);
+require_once "$__CUR_DIR__/../common.php";
+require_once 'HTTP/OAuth2/Server/Storage/Mock.php';
 require_once 'PHPUnit/Framework.php';
  
-define('__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__','token_endpoint_');
-define('__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__','http://172.16.1.34:12961/oauth2/token.php');
-
 class Token_EndPoint extends PHPUnit_Framework_TestCase
 {
 	private $_store = null;
@@ -16,11 +14,12 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 	private $_verifier1 = null;
 
 	public function setUp(){
-		$this->_store = new HTTP_OAuth2_Storage_Mock();
+		$this->_store = new HTTP_OAuth2_Server_Storage_Mock();
+		$this->_store->init(__OAUTH2_TEST_TEMP_DIR__);
 		$this->_client = new HTTP_OAuth2_Credential_Client();
 
-		$this->_client->client_id = __OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__.'client_'.uniqid();
-		$this->_client->client_secret = __OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__.'client_'.md5(uniqid());
+		$this->_client->id = __OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__.'client_'.uniqid();
+		$this->_client->secret = __OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__.'client_'.md5(uniqid());
 
 		$this->_store->createClient($this->_client);
 
@@ -31,14 +30,19 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 
 		$this->_store->createUser($this->_user);
 
-		$this->_verifier = $this->_store->createVerifier($this->_client, $this->_user);
-		$this->_verifier1 = $this->_store->createVerifier($this->_client, $this->_user);
+		$verifier = new HTTP_OAuth2_Token_AuthorizationCode();
+		$verifier->client_id = $this->_client->id;
+		$verifier->username = $this->_user->username;
+		$verifier->redirect_uri = __OAUTH2_TEST_UNIT_CALLBACK__;
+
+		$this->_verifier = $this->_store->createAuthorizationCode($verifier);
+		$this->_verifier1 = $this->_store->createAuthorizationCode($verifier);
 	}
 
     public function testVerificationValidCode()
     {
-		$client_id = $this->_client->client_id;
-		$client_secret = $this->_client->client_secret;
+		$client_id = $this->_client->id;
+		$client_secret = $this->_client->secret;
 		$rCurl=curl_init();
 		curl_setopt($rCurl,CURLOPT_URL,__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__);
 		curl_setopt($rCurl,CURLOPT_VERBOSE,0);
@@ -49,10 +53,10 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
 			'grant_type'=>'authorization_code',
-			'client_id'=>$this->_client->client_id,
-			'client_secret'=>$this->_client->client_secret,
+			'client_id'=>$this->_client->id,
+			'client_secret'=>$this->_client->secret,
 			'code'=>$this->_verifier->code,
-			'redirect_uri'=>'https%3A%2F%2Fclient.example.com%2Fcb',
+			'redirect_uri'=>__OAUTH2_TEST_UNIT_CALLBACK__,
 			);
 		$sData = '';
 		foreach($aData as $key=>$val){
@@ -70,8 +74,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 
     public function testVerificationInvalidCode()
 	{
-		$client_id = $this->_client->client_id;
-		$client_secret = $this->_client->client_secret;
+		$client_id = $this->_client->id;
+		$client_secret = $this->_client->secret;
 		$rCurl=curl_init();
 		curl_setopt($rCurl,CURLOPT_URL,__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__);
 		curl_setopt($rCurl,CURLOPT_VERBOSE,0);
@@ -82,8 +86,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
 			'grant_type'=>'authorization_code',
-			'client_id'=>$this->_client->client_id,
-			'client_secret'=>$this->_client->client_secret,
+			'client_id'=>$this->_client->id,
+			'client_secret'=>$this->_client->secret,
 			'code'=>"false_code_".$this->_verifier->code,
 			'redirect_uri'=>'https%3A%2F%2Fclient.example.com%2Fcb',
 			);
@@ -103,8 +107,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 
     public function testValidClientByHeader()
 	{
-		$client_id = $this->_client->client_id;
-		$client_secret = $this->_client->client_secret;
+		$client_id = $this->_client->id;
+		$client_secret = $this->_client->secret;
 		$rCurl=curl_init();
 		curl_setopt($rCurl,CURLOPT_URL,__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__);
 		curl_setopt($rCurl,CURLOPT_VERBOSE,0);
@@ -132,8 +136,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 
     public function testValidClientByContent()
 	{
-		$client_id = $this->_client->client_id;
-		$client_secret = $this->_client->client_secret;
+		$client_id = $this->_client->id;
+		$client_secret = $this->_client->secret;
 		$rCurl=curl_init();
 		curl_setopt($rCurl,CURLOPT_URL,__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT__);
 		curl_setopt($rCurl,CURLOPT_VERBOSE,0);
@@ -144,8 +148,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
 //		curl_setopt($rCurl,CURLOPT_HTTPHEADER,array('Authorization: Basic '.base64_encode("$client_id:$client_secret")));
 		$aData=array(
 			'grant_type'=>'none',
-			'client_id'=>$this->_client->client_id,
-			'client_secret'=>$this->_client->client_secret,
+			'client_id'=>$this->_client->id,
+			'client_secret'=>$this->_client->secret,
 			);
 		$sData = '';
 		foreach($aData as $key=>$val){
@@ -162,11 +166,8 @@ class Token_EndPoint extends PHPUnit_Framework_TestCase
     }
 
 	public function tearDown(){
+		$this->_store->fini();
 		$this->_store = null;
-		$files = glob(__OAUTH2_TEST_TMP_DIR__."/".__OAUTH2_TEST_UNIT_TOKEN_ENDPOINT_PREFIX__."*");
-		foreach($files as $file){
-			unlink($file);
-		}
 	}
 }
 

@@ -1,27 +1,27 @@
 <?php
 
-require_once '../commen.php';
-require_once 'HTTP/OAuth2/Storage/Mock.php';
+$__CUR_DIR__ = dirname(__FILE__);
+require_once "$__CUR_DIR__/../common.php";
+require_once 'HTTP/OAuth2/Server/Storage/Mock.php';
 require_once 'PHPUnit/Framework.php';
  
-define('__OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__','storage_mock_');
-
 class Storage_Mock extends PHPUnit_Framework_TestCase
 {
 	private $_store = null;
 	public function setUp(){
-		$this->_store = new HTTP_OAuth2_Storage_Mock();
+		$this->_store = new HTTP_OAuth2_Server_Storage_Mock();
+		$this->_store->init(__OAUTH2_TEST_TEMP_DIR__);
 	}
 
     public function testCreateClient()
     {
 		$client = new HTTP_OAuth2_Credential_Client();
 
-		$client->client_id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
-		$client->client_secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
+		$client->id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
+		$client->secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
 
 		$this->_store->createClient($client);
-		$stored_client = $this->_store->selectClient($client->client_id);
+		$stored_client = $this->_store->selectClient($client->id);
         $this->assertTrue($client == $stored_client, 'stored client should equal to the original one');
  
         //$this->markTestIncomplete(
@@ -41,46 +41,40 @@ class Storage_Mock extends PHPUnit_Framework_TestCase
         $this->assertTrue($user == $stored_user, 'stored user should equal to the original one');
     }
 
-    public function testCreateVerifier()
+    public function testCreateAuthorizationCode()
     {
 		$client = new HTTP_OAuth2_Credential_Client();
 
-		$client->client_id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
-		$client->client_secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
+		$client->id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
+		$client->secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
 
 		$user = new HTTP_OAuth2_Credential_User();
 
 		$user->username = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.uniqid();
 		$user->password = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.md5(uniqid());
 
-		$verifier = $this->_store->createVerifier($client, $user);
-		$stored_verifier = $this->_store->selectVerifier($verifier->code);
+		$verifier = new HTTP_OAuth2_Token_AuthorizationCode();
+		$verifier->client_id = $client->id;
+		$verifier->username = $user->username;
+		$this->_store->createAuthorizationCode($verifier);
+		$stored_verifier = $this->_store->selectAuthorizationCode($verifier->code);
         $this->assertTrue($verifier == $stored_verifier, 'stored verifier should equal to the original one');
     }
 
     public function testCreateAuthorization()
     {
-		$client = new HTTP_OAuth2_Credential_Client();
+		$client_id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
 
-		$client->client_id = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.uniqid();
-		$client->client_secret = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'client_'.md5(uniqid());
+		$username = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.uniqid();
 
-		$user = new HTTP_OAuth2_Credential_User();
-
-		$user->username = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.uniqid();
-		$user->password = __OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__.'user_'.md5(uniqid());
-
-		$auth = $this->_store->createAuthorization($client->client_id, $user->username);
-		$stored_auth = $this->_store->selectAuthorization($client->client_id, $user->username);
+		$auth = $this->_store->createAuthorization(HTTP_OAuth2_Server_Storage_Authorization::AUTHORIZATION_TYPE_USER,$client_id, $username);
+		$stored_auth = $this->_store->selectAuthorization($auth->id);
         $this->assertTrue($auth == $stored_auth, 'stored authorization should equal to the original one');
     }
 
 	public function tearDown(){
+		$this->_store->fini();
 		$this->_store = null;
-		$files = glob(__OAUTH2_TEST_TMP_DIR__."/".__OAUTH2_TEST_UNIT_STORAGE_MOCK_PREFIX__."*");
-		foreach($files as $file){
-			unlink($file);
-		}
 	}
 }
 

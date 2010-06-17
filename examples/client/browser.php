@@ -3,10 +3,16 @@
 $__CUR_DIR__=dirname(__FILE__);
 require_once "$__CUR_DIR__/common.php";
 
+require_once "HTTP/OAuth2/Client/Request.php";
+require_once "HTTP/OAuth2/Credential/Client.php";
+
 $client_id = __OAUTH2_TEST_CLIENT_ID__;
 $encoded_client_id = urlencode($client_id);
 $client_secret = __OAUTH2_TEST_CLIENT_SECRET__;
 $encoded_client_secret = urlencode($client_secret);
+$client=new HTTP_OAuth2_Credential_Client();
+$client->id=$client_id;
+$client->secret=$client_secret;
 $username=__OAUTH2_TEST_USER_ID__;
 $password=__OAUTH2_TEST_USER_SECRET__;
 $redirect_uri = __OAUTH2_TEST_REDIRECT_URI__;
@@ -34,6 +40,23 @@ function get_redirect($txt){
     return "";
 }
 
+function request2($uri,$data = "",$headers = array()){
+	$oRequest = new HTTP_Request2();
+
+	$oRequest->setUrl($uri);
+    if(empty($data)){
+		$oRequest->setMethod(HTTP_Request2::METHOD_GET);
+	} else {
+		$oRequest->setMethod(HTTP_Request2::METHOD_POST);
+	}
+	try{
+		$oResponse = $oRequest->send();
+		echo "status code: ".$oResponse->getStatus()."\n";
+		echo $oResponse->getBody();
+	}catch(HTTP_Request2_Exception $e){
+		die('Error: '.$e->getMessage());
+	}
+}
 function request($uri,$data = "",$headers = array()){
     $curl=curl_init();
     curl_setopt($curl,CURLOPT_URL,$uri);
@@ -86,9 +109,11 @@ while($line = read_keyboard($main_menu)){
 
 
 function test_web_server(){
-    global $client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$encoded_redirect_uri;
+    global $client,$client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$redirect_uri,$encoded_redirect_uri;
 
     $line=read_keyboard("Client Credentials transfer through FORM or HTTP Basic Authentication Scheme?\n  1. FORM(default),  2. HTTP Basic");
+
+	$oRequest = new HTTP_OAuth2_Client_Request();
 
     $client_http_basic = 0;
     if($line == 2){
@@ -135,12 +160,22 @@ EOT;
         }
         $line = read_keyboard("Then, if you give me the Authorization Code, I will give you the Access Token");
         $token_uri=__OAUTH2_TEST_ENDPOINT_TOKEN__;
-        if($client_http_basic){
-            $data="grant_type=authorization_code&code=$line&redirect_uri=$encoded_redirect_uri";
-        }else{
-            $data="grant_type=authorization_code&code=$line&client_id=$encoded_client_id&client_secret=$encoded_client_secret&redirect_uri=$encoded_redirect_uri";
-        }
-        $response=request($token_uri,$data,$headers);
+        $data=array(
+			"grant_type"=>"authorization_code",
+			"code"=>$line,
+			"redirect_uri"=>$redirect_uri,
+			);
+		$oRequest->setUrl($token_uri);
+		$oRequest->setParameters($data);
+		$oRequest->setClientCredential($client);
+		$oResponse = $oRequest->send();
+		$request=$oRequest->getBody();
+		$headers=$oResponse->getHeader();
+		$response="HTTP/".$oResponse->getVersion()." ".$oResponse->getStatus()." ".$oResponse->getReasonPhrase()."\n";
+		foreach($headers as $key=>$val){
+			$response.="$key: $val\n";
+		}
+		$response.=$oResponse->getBody();
         $txt=<<<EOT
 -------------------------------------------------------------------
 Response:

@@ -54,6 +54,6 @@ elseif($request->getParameter('type')=='user_agent')
 }
 else
 {
-    throw new HTTP_OAuth2_Exception("type error");
+    echo("'type' error");
 }
 ?>

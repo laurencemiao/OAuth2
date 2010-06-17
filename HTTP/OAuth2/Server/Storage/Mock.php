@@ -113,7 +113,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function createAuthorizationCode(HTTP_OAuth2_Token_AuthorizationCode $verifier)
     {
 
-        $code = substr(md5($verifier->id.$verifier->username.microtime(1)),0,8);
+        $code = substr(md5($verifier->client_id.$verifier->username.microtime(1)),0,8);
         $verifier->code = $code;
 
         $this->_save($code, $verifier);
