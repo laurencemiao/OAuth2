@@ -25,18 +25,16 @@ require_once 'HTTP/OAuth2/Exception.php';
 
 abstract class HTTP_OAuth2{
 
-    // draft 08, client profiles
-    const CLIENT_PROFILE_WEBSERVER = 'web_server';
-    const CLIENT_PROFILE_USERAGENT = 'user_agent';
-    const CLIENT_PROFILE_NATIVEAPPLICATION = 'native_application';
-    const CLIENT_PROFILE_ASSERTION = 'autonomous';
+    // draft 15, token endpoint grant type
+    const GRANT_TYPE_AUTHORIZATIONCODE	= 'authorization_code';
+    const GRANT_TYPE_IMPLICIT		= 'implicit';
+    const GRANT_TYPE_PASSWORD		= 'password';
+    const GRANT_TYPE_CLIENT		= 'client';
+    const GRANT_TYPE_EXTENTION		= 'extention';
 
-    // draft 08, token endpoint grant type
-    const TOKEN_GRANT_TYPE_AUTHORIZATIONCODE = 'authorization_code';
-    const TOKEN_GRANT_TYPE_USERBASIC = 'user_basic_credentials';
-    const TOKEN_GRANT_TYPE_ASSERTION = 'assertion';
-    const TOKEN_GRANT_TYPE_NONE = 'none';
-    const TOKEN_GRANT_TYPE_REFRESHTOKEN = 'refresh_token';
+    // draft 15, authorize endpoint response_type
+    const RESPONSE_TYPE_CODE	= 'code';
+    const RESPONSE_TYPE_TOKEN	= 'token';
 
 }
 

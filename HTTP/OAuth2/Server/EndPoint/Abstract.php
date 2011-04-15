@@ -3,9 +3,9 @@
 require_once 'HTTP/OAuth2/Server/EndPoint.php';
 require_once 'HTTP/OAuth2/Server/Request.php';
 require_once 'HTTP/OAuth2/Server/Response.php';
-require_once 'HTTP/OAuth2/Credential/Client.php';
-require_once 'HTTP/OAuth2/Credential/User.php';
-require_once 'HTTP/OAuth2/Credential/Assertion.php';
+require_once 'HTTP/OAuth2/Authorization/Client.php';
+require_once 'HTTP/OAuth2/Authorization/User.php';
+require_once 'HTTP/OAuth2/Authorization/Assertion.php';
 require_once 'HTTP/OAuth2/Server/Storage/Abstract.php';
 
 
