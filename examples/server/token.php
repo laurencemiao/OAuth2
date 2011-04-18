@@ -6,11 +6,10 @@ require_once "$__CUR_DIR__/common.php";
 
 $config = array(
     'grant_type' => array(
-        HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE => true,
-        HTTP_OAuth2::TOKEN_GRANT_TYPE_USERBASIC => true,
-        HTTP_OAuth2::TOKEN_GRANT_TYPE_ASSERTION => true,
-        HTTP_OAuth2::TOKEN_GRANT_TYPE_NONE => true,
-        HTTP_OAuth2::TOKEN_GRANT_TYPE_REFRESHTOKEN => true,
+        HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE => true,
+        HTTP_OAuth2::GRANT_TYPE_IMPLICIT => true,
+        HTTP_OAuth2::GRANT_TYPE_PASSWORD => true,
+        HTTP_OAuth2::GRANT_TYPE_CLIENT => true,
         ),
     'access_token_expires_in' => 7200,
     'show_refresh_token' => true,

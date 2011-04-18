@@ -9,7 +9,7 @@ set_include_path(implode(PATH_SEPARATOR, $sPath));
 
 require_once 'HTTP/OAuth2/Server/Storage/Mock.php';
 require_once 'HTTP/OAuth2/Server/EndPoint/Token.php';
-require_once 'HTTP/OAuth2/Server/Request.php';
+require_once 'HTTP/OAuth2/Request.php';
 require_once 'HTTP/OAuth2/Server/EndPoint/Token.php';
 
 

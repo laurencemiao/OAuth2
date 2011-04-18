@@ -1,10 +1,10 @@
 <?php
 
 require_once 'HTTP/OAuth2/Server/EndPoint.php';
-require_once 'HTTP/OAuth2/Server/Request.php';
-require_once 'HTTP/OAuth2/Server/Response.php';
+require_once 'HTTP/OAuth2/Request.php';
+require_once 'HTTP/OAuth2/Response.php';
 require_once 'HTTP/OAuth2/Authorization/Client.php';
-require_once 'HTTP/OAuth2/Authorization/User.php';
+require_once 'HTTP/OAuth2/Authorization/Password.php';
 require_once 'HTTP/OAuth2/Authorization/Assertion.php';
 require_once 'HTTP/OAuth2/Server/Storage/Abstract.php';
 

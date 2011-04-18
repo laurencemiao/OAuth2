@@ -3,14 +3,14 @@
 $__CUR_DIR__=dirname(__FILE__);
 require_once "$__CUR_DIR__/common.php";
 
-require_once "HTTP/OAuth2/Client/Request.php";
-require_once "HTTP/OAuth2/Credential/Client.php";
+require_once "HTTP/OAuth2/Request.php";
+require_once "HTTP/OAuth2/Authorization/Client.php";
 
 $client_id = __OAUTH2_TEST_CLIENT_ID__;
 $encoded_client_id = urlencode($client_id);
 $client_secret = __OAUTH2_TEST_CLIENT_SECRET__;
 $encoded_client_secret = urlencode($client_secret);
-$client=new HTTP_OAuth2_Credential_Client();
+$client=new HTTP_OAuth2_Authorization_Client();
 $client->id=$client_id;
 $client->secret=$client_secret;
 $username=__OAUTH2_TEST_USER_ID__;
@@ -18,12 +18,11 @@ $password=__OAUTH2_TEST_USER_SECRET__;
 $redirect_uri = __OAUTH2_TEST_REDIRECT_URI__;
 $encoded_redirect_uri = urlencode($redirect_uri);
 
-
 function read_keyboard($msg){
     $txt=<<<EOT
 $msg
 -------------------------------------------------------------------
->
+> 
 EOT;
     echo $txt;
     $line = trim(fgets(STDIN));
@@ -40,23 +39,6 @@ function get_redirect($txt){
     return "";
 }
 
-function request2($uri,$data = "",$headers = array()){
-	$oRequest = new HTTP_Request2();
-
-	$oRequest->setUrl($uri);
-    if(empty($data)){
-		$oRequest->setMethod(HTTP_Request2::METHOD_GET);
-	} else {
-		$oRequest->setMethod(HTTP_Request2::METHOD_POST);
-	}
-	try{
-		$oResponse = $oRequest->send();
-		echo "status code: ".$oResponse->getStatus()."\n";
-		echo $oResponse->getBody();
-	}catch(HTTP_Request2_Exception $e){
-		die('Error: '.$e->getMessage());
-	}
-}
 function request($uri,$data = "",$headers = array()){
     $curl=curl_init();
     curl_setopt($curl,CURLOPT_URL,$uri);
@@ -82,7 +64,7 @@ function request($uri,$data = "",$headers = array()){
 
 $main_menu=<<<EOT
 please enter your choice, QUIT if empty string entered:\n
-  0. QUIT, 1. Web Server, 2. User-Agent, 3. Native Application, 4. Autonomous\n
+  0. QUIT, 1. Authorization Code 2. Implicit Grant, 3. Owner Password, 4. Client\n
 EOT;
 while($line = read_keyboard($main_menu)){
     $choice=intval($line);
@@ -91,7 +73,7 @@ while($line = read_keyboard($main_menu)){
             exit();
             break;
         case 1:
-            test_web_server();
+            test_auth_code();
             break;
         case 2:
             test_user_agent();
@@ -108,12 +90,12 @@ while($line = read_keyboard($main_menu)){
 }
 
 
-function test_web_server(){
+function test_auth_code(){
     global $client,$client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$redirect_uri,$encoded_redirect_uri;
 
     $line=read_keyboard("Client Credentials transfer through FORM or HTTP Basic Authentication Scheme?\n  1. FORM(default),  2. HTTP Basic");
 
-	$oRequest = new HTTP_OAuth2_Client_Request();
+    $oRequest = new HTTP_OAuth2_Request();
 
     $client_http_basic = 0;
     if($line == 2){
@@ -127,7 +109,7 @@ function test_web_server(){
     }else{
         $headers=array();
     }
-    $authorize_url=__OAUTH2_TEST_ENDPOINT_AUTHORIZE__."?type=web_server&client_id=$encoded_client_id&redirect_uri=$encoded_redirect_uri&state=test_web_server";
+    $authorize_url=__OAUTH2_TEST_ENDPOINT_AUTHORIZE__."?response_type=code&client_id=$encoded_client_id&redirect_uri=$encoded_redirect_uri&state=test_auth_code";
     $response=request($authorize_url);
     $txt=<<<EOT
 -------------------------------------------------------------------

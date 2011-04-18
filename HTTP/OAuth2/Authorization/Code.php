@@ -1,6 +1,6 @@
 <?php
 
-class HTTP_OAuth2_Token_AuthorizationCode{
+class HTTP_OAuth2_Authorization_Code{
     public $client_id       = null;
     public $username        = null;
     public $code            = null;

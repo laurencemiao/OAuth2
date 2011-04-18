@@ -1,7 +1,7 @@
 <?php
 
 require_once 'HTTP/OAuth2/Client.php';
-require_once 'HTTP/OAuth2/Credential/Client.php';
+require_once 'HTTP/OAuth2/Authorization/Client.php';
 require_once 'HTTP/Request2.php';
 
 class HTTP_OAuth2_Client_Request extends HTTP_OAuth2_Client
@@ -27,9 +27,87 @@ class HTTP_OAuth2_Client_Request extends HTTP_OAuth2_Client
     const HTTP_METHOD_DELETE    = 'DELETE';
     const HTTP_METHOD_HEAD      = 'HEAD';
 
-	public function setClientCredential(HTTP_OAuth2_Credential_Client $client){
-		$this->_client=$client;
-	}
+    function build()
+    {
+    
+        $ret = 1;
+        if(empty($_SERVER['REQUEST_METHOD']))
+        {
+            $this->_method = self::HTTP_METHOD_HEAD;
+        }
+        else
+        {
+            $this->_method = $_SERVER['REQUEST_METHOD'];
+        }
+        
+        if(isset($_SERVER['PHP_AUTH_USER'])){
+            $this->_auth_scheme = self::HTTP_AUTHEN_SCHEME_BASIC;
+            $this->_auth_parameters = array('username'=>$_SERVER['PHP_AUTH_USER'],'password'=>$_SERVER['PHP_AUTH_PW']);
+        }elseif(isset($_SERVER['PHP_AUTH_DIGEST'])){
+            $this->_auth_scheme = self::HTTP_AUTHEN_SCHEME_DIGEST;
+            $this->_auth_parameters = self::_http_digest_parse($_SERVER['PHP_AUTH_DIGEST']);
+        }
+
+        if($this->_method == self::HTTP_METHOD_POST)
+        {
+            $this->_content_type=empty($_SERVER['CONTENT_TYPE'])?'':$_SERVER['CONTENT_TYPE'];
+            if($this->_content_type == 'application/json')
+            {
+                $this->_parameters = json_decode(file_get_contents('php://input'),1);
+                if(false === $this->_parameters) $ret = 0;
+            }
+            elseif($this->_content_type == 'application/x-www-form-urlencoded')
+            {
+                $this->_parameters=$_POST;
+            }
+            else
+            {
+                $ret = 0;
+            }
+        }
+        elseif($this->_method == self::HTTP_METHOD_GET)
+        {
+            $this->_parameters=$_GET;
+        }
+        else
+        {
+            $ret = 0;
+        }
+
+        if (function_exists('apache_request_headers')) {
+            $this->_headers = apache_request_headers();
+        }else{
+            $this->_headers = http_get_request_headers();
+        }
+        
+        return $ret;
+    }
+
+    private function _http_digest_parse($txt)
+    {
+        // protect against missing data
+        $needed_parts = array(
+                        'nonce'=>1,
+                        'nc'=>1,
+                        'cnonce'=>1,
+                        'qop'=>1,
+                        'username'=>1,
+                        'uri'=>1,
+                        'response'=>1);
+                        
+        $data = array();
+
+        preg_match_all('@(\w+)=(?:(?:\'([^\']+)\'|"([^"]+)")|([^\s,]+))@',
+                        $txt, $matches,
+                        PREG_SET_ORDER);
+
+        foreach ($matches as $m) {
+            $data[$m[1]] = $m[2] ? $m[2] : ($m[3] ? $m[3] : $m[4]);
+            unset($needed_parts[$m[1]]);
+        }
+
+        return $needed_parts ? false : $data;
+    }
     
     public function setHeader($name, $value)
     {

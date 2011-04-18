@@ -4,5 +4,5 @@ else{
     if($_GET['state']=='test_web_server')
         echo 'Oops, Authorization Code not received!';
     else
-        echo 'Callback page could not get Authorization Code while be used in User-Agent Profile!';
+        echo 'Callback page could not get Authorization Code.';
 }

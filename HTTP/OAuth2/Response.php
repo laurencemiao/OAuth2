@@ -2,7 +2,7 @@
 
 require_once 'HTTP/OAuth2/Server.php';
 
-class HTTP_OAuth2_Server_Response extends HTTP_OAuth2_Server{
+class HTTP_OAuth2_Response extends HTTP_OAuth2{
 
     const HTTP_STATUS_HEADER_200    =   'HTTP/1.1 200 OK';
     const HTTP_STATUS_HEADER_401    =   'HTTP/1.1 401 Unauthorized';

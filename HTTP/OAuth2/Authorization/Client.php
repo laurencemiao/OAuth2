@@ -1,8 +1,8 @@
 <?php
 
-require_once 'HTTP/OAuth2/Credential/Abstract.php';
+require_once 'HTTP/OAuth2/Authorization/Abstract.php';
 
-class HTTP_OAuth2_Credential_Client extends HTTP_OAuth2_Credential_Abstract{
+class HTTP_OAuth2_Authorization_Client extends HTTP_OAuth2_Authorization_Abstract{
     public $id = null;
     public $secret = null;
     private $_grant_types = '';

@@ -1,11 +1,11 @@
 <?php
 
 require_once 'HTTP/OAuth2/Server/Storage/Authorization.php';
-require_once 'HTTP/OAuth2/Credential/Client.php';
-require_once 'HTTP/OAuth2/Credential/User.php';
+require_once 'HTTP/OAuth2/Authorization/Client.php';
+require_once 'HTTP/OAuth2/Authorization/Password.php';
+require_once 'HTTP/OAuth2/Authorization/Code.php';
 require_once 'HTTP/OAuth2/Token/AccessToken.php';
 require_once 'HTTP/OAuth2/Token/RefreshToken.php';
-require_once 'HTTP/OAuth2/Token/AuthorizationCode.php';
 
 abstract class HTTP_OAuth2_Server_Storage_Abstract
 {
@@ -16,18 +16,18 @@ abstract class HTTP_OAuth2_Server_Storage_Abstract
     function fini(){}
 
     abstract function selectClient($client_id);
-    abstract function createClient(HTTP_OAuth2_Credential_Client $client);
+    abstract function createClient(HTTP_OAuth2_Authorization_Client $client);
     abstract function deleteClient($client_id);
-    abstract function checkClient(HTTP_OAuth2_Credential_Client $client);
+    abstract function checkClient(HTTP_OAuth2_Authorization_Client $client);
     function existClient($client_id){
         $client = $this->selectClient($client_id);
         return empty($client) ? 0 : 1;
     }
 
     abstract function selectUser($username);
-    abstract function createUser(HTTP_OAuth2_Credential_User $user);
+    abstract function createUser(HTTP_OAuth2_Authorization_Password $user);
     abstract function deleteUser($username);
-    abstract function checkUser(HTTP_OAuth2_Credential_User $user);
+    abstract function checkUser(HTTP_OAuth2_Authorization_Password $user);
     function existUser($username){
         $user = $this->selectUser($username);
         return empty($user) ? 0 : 1;
@@ -56,7 +56,7 @@ abstract class HTTP_OAuth2_Server_Storage_Abstract
     {
         throw new HTTP_OAuth2_Exception('Not Implemented!');
     }
-    function createAssertion(HTTP_OAuth2_Credential_Assertion $user)
+    function createAssertion(HTTP_OAuth2_Authorization_Assertion $user)
     {
         throw new HTTP_OAuth2_Exception('Not Implemented!');
     }
@@ -64,7 +64,7 @@ abstract class HTTP_OAuth2_Server_Storage_Abstract
     {
         throw new HTTP_OAuth2_Exception('Not Implemented!');
     }
-    function checkAssertion(HTTP_OAuth2_Credential_Assertion $user)
+    function checkAssertion(HTTP_OAuth2_Authorization_Assertion $user)
     {
         throw new HTTP_OAuth2_Exception('Not Implemented!');
     }

@@ -54,7 +54,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
         return $ret;
     }
 
-    function checkAssertion(HTTP_OAuth2_Credential_Assertion $user)
+    function checkAssertion(HTTP_OAuth2_Authorization_Assertion $user)
     {
         return 1;
     }
@@ -89,12 +89,12 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
         return $client;
     }
     function deleteClient($client_id){}
-    function createClient(HTTP_OAuth2_Credential_Client $client){
+    function createClient(HTTP_OAuth2_Authorization_Client $client){
         $this->_save($client->id,$client);
 
         return $client;
     }
-    function checkClient(HTTP_OAuth2_Credential_Client $client){
+    function checkClient(HTTP_OAuth2_Authorization_Client $client){
         $ret = 0;
         $check_client = $this->_load($client->id);
         if(!empty($check_client)){
@@ -110,7 +110,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
         $verifier = $this->_load($code);
         return $verifier;
     }
-    function createAuthorizationCode(HTTP_OAuth2_Token_AuthorizationCode $verifier)
+    function createAuthorizationCode(HTTP_OAuth2_Authorization_Code $verifier)
     {
 
         $code = substr(md5($verifier->client_id.$verifier->username.microtime(1)),0,8);
@@ -123,7 +123,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function deleteAuthorizationCode($code){
         $this->_delete($code);
     }
-    function checkAuthorizationCode(HTTP_OAuth2_Token_AuthorizationCode $verifier){
+    function checkAuthorizationCode(HTTP_OAuth2_Authorization_Code $verifier){
         $ret = 0;
         $check_verifier = $this->selectAuthorizationCode($verifier->code);
         if(!empty($check_verifier)){
@@ -151,7 +151,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
     function deleteRefreshToken($refresh_token){}
     function checkRefreshToken(HTTP_OAuth2_Token_RefreshToken $refresh_token){}
 
-    function checkUser(HTTP_OAuth2_Credential_User $user){
+    function checkUser(HTTP_OAuth2_Authorization_Password $user){
         $ret = 0;
         $check_user = $this->_load($user->username);
         if(!empty($check_user)){
@@ -182,7 +182,7 @@ class HTTP_OAuth2_Server_Storage_Mock extends HTTP_OAuth2_Server_Storage_Abstrac
         $user = $this->_load($username);
         return $user;
     }
-    function createUser(HTTP_OAuth2_Credential_User $user){
+    function createUser(HTTP_OAuth2_Authorization_Password $user){
         $this->_save($user->username, $user);
 
         return $user;
