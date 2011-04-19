@@ -64,7 +64,7 @@ function request($uri,$data = "",$headers = array()){
 
 $main_menu=<<<EOT
 please enter your choice, QUIT if empty string entered:\n
-  0. QUIT, 1. Authorization Code 2. Implicit Grant, 3. Owner Password, 4. Client\n
+  0. QUIT, 1. Code 2. Implicit, 3. Password, 4. Client\n
 EOT;
 while($line = read_keyboard($main_menu)){
     $choice=intval($line);
@@ -76,13 +76,13 @@ while($line = read_keyboard($main_menu)){
             test_auth_code();
             break;
         case 2:
-            test_user_agent();
+            test_implicit();
             break;
         case 3:
-            test_native();
+            test_password();
             break;
         case 4:
-            test_autonomous();
+            test_client();
             break;
         default:
             echo "wrong number!\n\n";
@@ -157,7 +157,7 @@ EOT;
 		foreach($headers as $key=>$val){
 			$response.="$key: $val\n";
 		}
-		$response.=$oResponse->getBody();
+		$response.="\n".$oResponse->getBody();
         $txt=<<<EOT
 -------------------------------------------------------------------
 Response:
@@ -178,7 +178,7 @@ EOT;
     }
 }
 
-function test_user_agent(){
+function test_implicit(){
     global $client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$encoded_redirect_uri;
 
     $line=read_keyboard("Client Credentials transfer through FORM or HTTP Basic Authentication Scheme?\n  1. FORM(default),  2. HTTP Basic");
@@ -196,7 +196,7 @@ function test_user_agent(){
         $headers=array();
     }
 
-    $authorize_url=__OAUTH2_TEST_ENDPOINT_AUTHORIZE__."?type=user_agent&client_id=$encoded_client_id&redirect_uri=$encoded_redirect_uri&state=test_user_agent";
+    $authorize_url=__OAUTH2_TEST_ENDPOINT_AUTHORIZE__."?response_type=token&client_id=$encoded_client_id&redirect_uri=$encoded_redirect_uri&state=test_implicit";
     $response=request($authorize_url);
     $txt=<<<EOT
 -------------------------------------------------------------------
@@ -237,7 +237,7 @@ EOT;
     }
 }
 
-function test_native(){
+function test_password(){
     global $client_http_basic,$username,$password,$client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$encoded_redirect_uri;
 
     $line=read_keyboard("User Credentials transfer through FORM or HTTP Basic Authentication Scheme?\n  1. FORM(default),  2. HTTP Basic");
@@ -257,9 +257,9 @@ function test_native(){
     
     $token_uri=__OAUTH2_TEST_ENDPOINT_TOKEN__;
     if($user_http_basic){
-        $data="grant_type=user_basic_credentials&client_id=$encoded_client_id&client_secret=$encoded_client_secret";
+        $data="grant_type=password&client_id=$encoded_client_id&client_secret=$encoded_client_secret";
     }else{
-        $data="grant_type=user_basic_credentials&client_id=$encoded_client_id&client_secret=$encoded_client_secret&username=$username&password=$password";
+        $data="grant_type=password&client_id=$encoded_client_id&client_secret=$encoded_client_secret&username=$username&password=$password";
     }
     $response=request($token_uri,$data,$headers);
     $txt=<<<EOT
@@ -274,7 +274,7 @@ EOT;
 
 }
 
-function test_autonomous(){
+function test_client(){
     global $client_id,$client_secret,$encoded_client_id,$encoded_client_secret,$encoded_redirect_uri;
 
     $line=read_keyboard("Client Credentials transfer through FORM or HTTP Basic Authentication Scheme?\n  1. FORM(default),  2. HTTP Basic");
@@ -294,9 +294,9 @@ function test_autonomous(){
     
     $token_uri=__OAUTH2_TEST_ENDPOINT_TOKEN__;
     if($client_http_basic){
-        $data="grant_type=none";
+        $data="grant_type=client_credentials";
     }else{
-        $data="grant_type=none&client_id=$encoded_client_id&client_secret=$encoded_client_secret";
+        $data="grant_type=client_credentials&client_id=$encoded_client_id&client_secret=$encoded_client_secret";
     }
     $response=request($token_uri,$data,$headers);
     $txt=<<<EOT

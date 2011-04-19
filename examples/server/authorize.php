@@ -26,14 +26,14 @@ function myauthorize(){
 	return 1;
 }
 
-function mygetuser(){
+function myauthenticate(){
 	global $username;
 
 	return $username;
 }
 
 $myserver->authorize='myauthorize';
-$myserver->getUser='mygetuser';
+$myserver->authenticate='myauthenticate';
 
 $myserver->handle();
 

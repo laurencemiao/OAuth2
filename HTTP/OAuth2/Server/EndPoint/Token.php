@@ -73,7 +73,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
 
         // we don't really have to guess, after draft 08
         $grant_type = $request->getParameter('grant_type');
-        if(empty($grant_type)) $grant_type = HTTP_OAuth2::GRANT_TYPE_NONE;
+        if(empty($grant_type)) $grant_type = HTTP_OAuth2::GRANT_TYPE_CLIENT;
 
         return $grant_type;
     }
@@ -97,19 +97,13 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 break;
             case HTTP_OAuth2::GRANT_TYPE_PASSWORD:
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_ASSERTION:
-                if(empty($params['assertion_type']) || empty($params['assertion']))
-                {
-                    throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_INVALID_ASSERTION);
-                }
-                break;
             case HTTP_OAuth2::GRANT_TYPE_REFRESHTOKEN:
                 if(empty($params['refresh_token']))
                 {
                     throw new HTTP_OAuth2_Server_EndPoint_Exception("'refresh_token' empty");
                 }
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_NONE:
+            case HTTP_OAuth2::GRANT_TYPE_CLIENT:
                 break;
             default:
                 throw new HTTP_OAuth2_Server_EndPoint_Exception('should never come here');
@@ -148,7 +142,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                     $client_authen_type = self::CLIENT_AUTHEN_TYPE_FORM;
                 }
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_ASSERTION:
+            case HTTP_OAuth2::GRANT_TYPE_IMPLICIT:
                 $client_id = $request->getParameter('client_id');
                 if(empty($client_id)){
                     if($http_auth_scheme == HTTP_OAuth2_Request::HTTP_AUTHEN_SCHEME_BASIC)
@@ -176,7 +170,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                         $client_authen_type = self::CLIENT_AUTHEN_TYPE_FORM;
                 }
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_NONE:
+            case HTTP_OAuth2::GRANT_TYPE_CLIENT:
                 $client_id = $request->getParameter('client_id');
                 if(empty($client_id)){
                     if($http_auth_scheme == HTTP_OAuth2_Request::HTTP_AUTHEN_SCHEME_BASIC)
@@ -225,13 +219,10 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                         $user_authen_type = self::USER_AUTHEN_TYPE_FORM;
                 }
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_ASSERTION:
-                $user_authen_type = self::USER_AUTHEN_TYPE_NONE;
-                break;
             case HTTP_OAuth2::GRANT_TYPE_REFRESHTOKEN:
                 $user_authen_type = self::USER_AUTHEN_TYPE_NONE;
                 break;
-            case HTTP_OAuth2::GRANT_TYPE_NONE:
+            case HTTP_OAuth2::GRANT_TYPE_CLIENT:
                 $user_authen_type = self::USER_AUTHEN_TYPE_NONE;
                 break;
             default:
@@ -264,13 +255,13 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
 
         if($user_authen_type == self::CLIENT_AUTHEN_TYPE_HTTPBASIC){
             $http_authen_params = $request->getAuthenParameters();
-            $user = new HTTP_OAuth2_Authorization_User();
+            $user = new HTTP_OAuth2_Authorization_Password();
             $user->username = $http_authen_params['username'];
             $user->password = empty($http_authen_params['password'])?null:$http_authen_params['password'];
         }elseif($user_authen_type == self::CLIENT_AUTHEN_TYPE_FORM){
             $username = $request->getParameter('username');
             $password = $request->getParameter('password');
-            $user = new HTTP_OAuth2_Authorization_User();
+            $user = new HTTP_OAuth2_Authorization_Password();
             $user->username = $username;
             $user->password = $password;
         }
@@ -322,22 +313,6 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 $client_id,
                 $username);
         }
-        elseif($grant_type == HTTP_OAuth2::GRANT_TYPE_ASSERTION)
-        {
-            $assertion = new HTTP_OAuth2_Authorization_Assertion();
-            $assertion->assertion_type = $request->getParameter('assertion_type');
-            $assertion->assertion = $request->getParameter('assertion');
-            if(!$this->_store->checkAssertion($assertion))
-            {
-                throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_INVALID_ASSERTION);
-            }
-            $client_id = $client->id;
-            $authorization = $this->_store->createAuthorization(
-                HTTP_OAuth2_Server_Storage_Authorization::AUTHORIZATION_TYPE_ASSERTION,
-                $client_id,
-                $assertion->assertion,
-                $assertion->assertion_type);
-        }
         elseif($grant_type == HTTP_OAuth2::GRANT_TYPE_REFRESHTOKEN)
         {
             $refresh_token = $this->_store->selectRefreshToken($request->getParameter('refresh_token'));
@@ -346,7 +321,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 throw new HTTP_OAuth2_Server_EndPoint_Exception('authorization not exists');
             }
         }
-        elseif($grant_type == HTTP_OAuth2::GRANT_TYPE_NONE)
+        elseif($grant_type == HTTP_OAuth2::GRANT_TYPE_CLIENT)
         {
             $client_id = $client->id;
             $authorization = $this->_store->createAuthorization(

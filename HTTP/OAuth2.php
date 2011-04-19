@@ -29,8 +29,9 @@ abstract class HTTP_OAuth2{
     const GRANT_TYPE_AUTHORIZATIONCODE	= 'authorization_code';
     const GRANT_TYPE_IMPLICIT		= 'implicit';
     const GRANT_TYPE_PASSWORD		= 'password';
-    const GRANT_TYPE_CLIENT		= 'client';
+    const GRANT_TYPE_CLIENT		= 'client_credentials';
     const GRANT_TYPE_EXTENTION		= 'extention';
+    const GRANT_TYPE_REFRESHTOKEN	= 'refresh_token';
 
     // draft 15, authorize endpoint response_type
     const RESPONSE_TYPE_CODE	= 'code';

@@ -97,15 +97,15 @@ class HTTP_OAuth2_Server_EndPoint_Authorize extends HTTP_OAuth2_Server_EndPoint_
     }
 
     public $authorize;
-    public $getUser;
+    public $authenticate;
 
     private function _process($response_type, $client, $request){
 
         $refresh_token = null;
         $authorization = null;
-        $getUser = $this->getUser;
+        $authenticate = $this->authenticate;
         $authorize = $this->authorize;
-        $username = $getUser();
+        $username = $authenticate();
         $client_id = $client->id;
         if($response_type == HTTP_OAuth2::RESPONSE_TYPE_CODE)
         {

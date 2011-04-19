@@ -6,6 +6,7 @@ class HTTP_OAuth2_Authorization_Client extends HTTP_OAuth2_Authorization_Abstrac
     public $id = null;
     public $secret = null;
     private $_grant_types = '';
+    private $_redirect_uri = '';
     
     function addGrantType($grant_type){
         if(false === strpos(",$this->_grant_types,",",$grant_type,")){
@@ -28,6 +29,12 @@ class HTTP_OAuth2_Authorization_Client extends HTTP_OAuth2_Authorization_Abstrac
         }else{
             return 0;
         }
+    }
+    function setRedirectUri($uri){
+        $this->_redirect_uri = $uri;
+    }
+    function getRedirectUri(){
+        return $this->_redirect_uri;
     }
 
 }
