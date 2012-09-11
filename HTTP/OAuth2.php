@@ -33,6 +33,10 @@ abstract class HTTP_OAuth2{
     const GRANT_TYPE_EXTENTION		= 'extention';
     const GRANT_TYPE_REFRESHTOKEN	= 'refresh_token';
 
+    const CLIENT_PROFILE_WEB		= 'web';
+    const CLIENT_PROFILE_USERAGENT	= 'user-agent-based';
+    const CLIENT_PROFILE_NATIVE		= 'native';
+
     // draft 15, authorize endpoint response_type
     const RESPONSE_TYPE_CODE	= 'code';
     const RESPONSE_TYPE_TOKEN	= 'token';
