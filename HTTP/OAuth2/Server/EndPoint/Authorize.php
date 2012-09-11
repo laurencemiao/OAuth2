@@ -2,7 +2,7 @@
 
 require_once 'HTTP/OAuth2/Server/EndPoint/Abstract.php';
 
-class HTTP_OAuth2_Server_EndPoint_Authorize extends HTTP_OAuth2_Server_EndPoint_Abstract
+class HTTP_OAuth2_Server_EndPoint_Authorization extends HTTP_OAuth2_Server_EndPoint_Abstract
 {
 
     // draft 15, error

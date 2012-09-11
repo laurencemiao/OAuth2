@@ -42,7 +42,6 @@
           <file name="HTTP/OAuth2/Client.php" role="php" />
           <file name="HTTP/OAuth2/Server.php" role="php" />
           <file name="HTTP/OAuth2/Credential/Abstract.php" role="php" />
-          <file name="HTTP/OAuth2/Credential/Assertion.php" role="php" />
           <file name="HTTP/OAuth2/Credential/Client.php" role="php" />
           <file name="HTTP/OAuth2/Credential/User.php" role="php" />
           <file name="HTTP/OAuth2/Token/AccessToken.php" role="php" />
@@ -59,7 +58,7 @@
           <file name="HTTP/OAuth2/Server/Storage/Mock.php" role="php" />
           <file name="HTTP/OAuth2/Server/EndPoint/Exception.php" role="php" />
           <file name="HTTP/OAuth2/Server/EndPoint/Abstract.php" role="php" />
-          <file name="HTTP/OAuth2/Server/EndPoint/Authorize.php" role="php" />
+          <file name="HTTP/OAuth2/Server/EndPoint/Authorization.php" role="php" />
           <file name="HTTP/OAuth2/Server/EndPoint/Resource.php" role="php" />
           <file name="HTTP/OAuth2/Server/EndPoint/Token.php" role="php" />
 

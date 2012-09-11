@@ -2,7 +2,7 @@
 
 $__CUR_DIR__=dirname(__FILE__);
 require_once "$__CUR_DIR__/common.php";
-require_once 'HTTP/OAuth2/Server/EndPoint/Authorize.php';
+require_once 'HTTP/OAuth2/Server/EndPoint/Authorization.php';
 
 $config = array(
     'grant_type' => array(
@@ -16,7 +16,7 @@ $config = array(
     'show_refresh_token' => true,
     );
 
-$myserver=new HTTP_OAuth2_Server_EndPoint_Authorize($config, $mystore);
+$myserver=new HTTP_OAuth2_Server_EndPoint_Authorization($config, $mystore);
 
 $username=null;
 function myauthorize(){
