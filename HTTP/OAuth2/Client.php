@@ -10,4 +10,6 @@ abstract class HTTP_OAuth2_Client extends HTTP_OAuth2{
     public $client_identifier		= null;
     public $type			= null;
     public $redirect_uri		= null;
+
+    public $credentials			= null;
 }
