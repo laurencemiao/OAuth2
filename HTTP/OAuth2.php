@@ -37,9 +37,9 @@ abstract class HTTP_OAuth2{
     const CLIENT_PROFILE_USERAGENT	= 'user-agent-based';
     const CLIENT_PROFILE_NATIVE		= 'native';
 
-    // draft 15, authorize endpoint response_type
-    const RESPONSE_TYPE_CODE	= 'code';
-    const RESPONSE_TYPE_TOKEN	= 'token';
+    // draft 15, authorization endpoint response_type
+    const RESPONSE_TYPE_CODE		= 'code';
+    const RESPONSE_TYPE_TOKEN		= 'token';
 
 }
 
