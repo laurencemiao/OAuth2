@@ -12,6 +12,9 @@ class HTTP_OAuth2_Server_EndPoint_Authorization extends HTTP_OAuth2_Server_EndPo
     const ERROR_UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
     const ERROR_INVALID_SCOPE = "invalid_scope";
     
+    const RESPONSE_TYPE_CODE = "code";
+    const RESPONSE_TYPE_TOKEN = "token";
+
     public function obtainByAuthorizationCode($code, $redirect_uri){
     }
     public function obtainByOwnerCredentials($username, $password){
@@ -51,7 +54,8 @@ class HTTP_OAuth2_Server_EndPoint_Authorization extends HTTP_OAuth2_Server_EndPo
     private function _verifyParameter(HTTP_OAuth2_Request $request){
         $params = $request->getParameters();
                 
-        if(empty($params['response_type']))
+        if(empty($params['response_type']) ||
+		!in_array($params['response_type'],array(self::RESPONSE_TYPE_CODE,self::RESPONSE_TYPE_TOKEN)))
         {
             throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_UNSUPPORTED_RESPONSE_TYPE);
         }
