@@ -6,7 +6,7 @@ require_once "$__CUR_DIR__/common.php";
 
 $config = array(
     'grant_type' => array(
-        HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE => true,
+        HTTP_OAuth2::GRANT_TYPE_CODE => true,
         HTTP_OAuth2::GRANT_TYPE_IMPLICIT => true,
         HTTP_OAuth2::GRANT_TYPE_PASSWORD => true,
         HTTP_OAuth2::GRANT_TYPE_CLIENT => true,

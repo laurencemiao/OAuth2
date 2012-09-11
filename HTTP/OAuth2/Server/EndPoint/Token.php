@@ -85,7 +85,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 
         switch($grant_type)
         {
-            case HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE:
+            case HTTP_OAuth2::GRANT_TYPE_CODE:
                 if(empty($params['code']))
                 {
                     throw new HTTP_OAuth2_Server_EndPoint_Exception(self::ERROR_CODE_BAD_AUTHORIZATIONCODE);
@@ -120,7 +120,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 
         switch($grant_type)
         {
-            case HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE:
+            case HTTP_OAuth2::GRANT_TYPE_CODE:
                 $client_id = $request->getParameter('client_id');
                 if(empty($client_id)){
                     if($http_auth_scheme == HTTP_OAuth2_Request::HTTP_AUTHEN_SCHEME_BASIC)
@@ -198,7 +198,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
                 
         switch($grant_type)
         {
-            case HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE:
+            case HTTP_OAuth2::GRANT_TYPE_CODE:
                 $user_authen_type = self::USER_AUTHEN_TYPE_NONE;
                 break;
             case HTTP_OAuth2::GRANT_TYPE_PASSWORD:
@@ -278,7 +278,7 @@ class HTTP_OAuth2_Server_EndPoint_Token extends HTTP_OAuth2_Server_EndPoint_Abst
 
         $refresh_token = null;
         $authorization = null;
-        if($grant_type == HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE)
+        if($grant_type == HTTP_OAuth2::GRANT_TYPE_CODE)
         {
             
             if(!$this->_store->existAuthorizationCode($request->getParameter('code')))

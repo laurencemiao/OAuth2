@@ -7,7 +7,7 @@ $client=new HTTP_OAuth2_Authorization_Client();
 $client->id = __OAUTH2_TEST_CLIENT_ID__;
 $client->secret = __OAUTH2_TEST_CLIENT_SECRET__;
 
-$client->addGrantType(HTTP_OAuth2::GRANT_TYPE_AUTHORIZATIONCODE);
+$client->addGrantType(HTTP_OAuth2::GRANT_TYPE_CODE);
 $client->addGrantType(HTTP_OAuth2::GRANT_TYPE_IMPLICIT);
 $client->addGrantType(HTTP_OAuth2::GRANT_TYPE_PASSWORD);
 $client->addGrantType(HTTP_OAuth2::GRANT_TYPE_CLIENT);

@@ -6,7 +6,7 @@ require_once 'HTTP/OAuth2/Server/EndPoint/Authorize.php';
 
 $config = array(
     'grant_type' => array(
-//        HTTP_OAuth2::TOKEN_GRANT_TYPE_AUTHORIZATIONCODE => true,
+//        HTTP_OAuth2::TOKEN_GRANT_TYPE_CODE => true,
 //        HTTP_OAuth2::TOKEN_GRANT_TYPE_USERBASIC => true,
 //        HTTP_OAuth2::TOKEN_GRANT_TYPE_ASSERTION => true,
 //        HTTP_OAuth2::TOKEN_GRANT_TYPE_NONE => true,

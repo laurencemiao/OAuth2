@@ -26,7 +26,7 @@ require_once 'HTTP/OAuth2/Exception.php';
 abstract class HTTP_OAuth2{
 
     // draft 15, token endpoint grant type
-    const GRANT_TYPE_AUTHORIZATIONCODE	= 'authorization_code';
+    const GRANT_TYPE_CODE		= 'authorization_code';
     const GRANT_TYPE_IMPLICIT		= 'implicit';
     const GRANT_TYPE_PASSWORD		= 'password';
     const GRANT_TYPE_CLIENT		= 'client_credentials';
